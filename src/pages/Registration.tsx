@@ -13,7 +13,7 @@ const From = styled.form`
 	flex-direction: column;
 	padding: 100px;
 	background-color: #1c1d2c;
-	border-radius: 1em;
+	border-radius: 3em;
 	align-items: center;
 	.header {
 		font-weight: 300;

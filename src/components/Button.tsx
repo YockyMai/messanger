@@ -37,6 +37,9 @@ const ButtonStyles = styled.button`
 		left: 150px;
 		transition: 0.5s ease-in-out;
 	}
+	p {
+		font-weight: 800;
+	}
 `;
 
 interface ButtonProps {
@@ -44,5 +47,9 @@ interface ButtonProps {
 }
 
 export const Button: React.FC<ButtonProps> = ({ children }) => {
-	return <ButtonStyles>{children}</ButtonStyles>;
+	return (
+		<ButtonStyles>
+			<p>{children}</p>
+		</ButtonStyles>
+	);
 };
