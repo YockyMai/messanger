@@ -45,7 +45,8 @@ export const Registration = () => {
 				setValue={setPassword}
 				width={'300px'}
 			/>
-			<Button>Sign Up</Button>
+			<Button>SIGN UP</Button>
+			<br />
 			<p>
 				Already have an account? <Link to="/login">Login</Link>
 			</p>

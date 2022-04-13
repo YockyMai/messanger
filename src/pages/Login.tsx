@@ -6,7 +6,8 @@ import { Input } from '../components/Input';
 
 const Animation = styled.div`
 	position: relative;
-	width: 70%;
+	left: 50%;
+	transform: translateX(-50%);
 	overflow: hidden;
 	.view {
 		transform: scale(2);
@@ -107,7 +108,7 @@ const LoginForm = styled.form`
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
-	height: 50%;
+	height: 40%;
 `;
 
 const LoginWraper = styled.div`
