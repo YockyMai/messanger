@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Avatar } from './Avatar';
+import MessageSvg from '../assets/img/messageRead.svg';
 
 interface MessageProps {
 	username: string;
@@ -67,6 +68,7 @@ export const Message: React.FC<MessageProps> = ({
 				</a>
 				<p>{text}</p>
 				<span>{date}</span>
+				<img src={MessageSvg} alt="" />
 			</div>
 		</MessageStyles>
 	);
