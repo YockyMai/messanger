@@ -18,8 +18,14 @@ export const ChatBar = () => {
 			text: 'Жигуль купил на днях, что за аппарат!',
 			date: '11.08.2003',
 			username: 'Абема',
+			isReaded: true,
 		},
-		{ text: 'Всем хай!', date: '11.08.2003', username: 'Петрович' },
+		{
+			text: 'Всем хай!',
+			date: '11.08.2003',
+			username: 'Петрович',
+			isReaded: true,
+		},
 		{
 			text: 'Это текст моего сообщения!',
 			date: '12.08.2003',
@@ -38,6 +44,7 @@ export const ChatBar = () => {
 						date={el.date}
 						username={el.username}
 						isMe={el.isMe}
+						isReaded={el.isReaded}
 					/>
 				))}
 			</div>
