@@ -10,6 +10,7 @@ interface MessageProps {
 	date: string;
 	isMe?: boolean;
 	isReaded?: boolean;
+	attachments: object[] | undefined;
 }
 
 interface MessageStylesProps {
@@ -36,7 +37,30 @@ const MessageStyles = styled.div<MessageStylesProps>`
 		.checkedMsgImg {
 			margin-left: 8px;
 		}
+		.attachments {
+			display: flex;
+			flex-wrap: wrap;
+			margin-top: 15px;
+			justify-content: flex-start;
+			max-width: 400px;
+			border-radius: 0.5em;
 
+			.zoomed {
+				right: 0;
+				position: absolute;
+				transition: 0.3s;
+				transform: scale(5);
+			}
+			img {
+				transform: 0.3s;
+				cursor: pointer;
+				margin-left: 10px;
+				width: 100px;
+				height: 100px;
+				border-radius: 0.3em;
+				transform: scale(1);
+			}
+		}
 		p {
 			padding-top: 5px;
 			font-weight: 200;
@@ -59,6 +83,7 @@ export const Message: React.FC<MessageProps> = ({
 	date,
 	isMe,
 	isReaded,
+	attachments,
 }) => {
 	return (
 		<MessageStyles isMe={isMe || false}>
@@ -73,7 +98,14 @@ export const Message: React.FC<MessageProps> = ({
 				</a>
 				<div className="message-content">
 					<p>{text}</p>
-					<div></div>
+					<div className={attachments && 'attachments'}>
+						{attachments &&
+							attachments.map((el: any, index) => (
+								<div key={`${index}__${el.src}`}>
+									<img src={el.src} />
+								</div>
+							))}
+					</div>
 				</div>
 				<div className="message-info">
 					<span>{date}</span>

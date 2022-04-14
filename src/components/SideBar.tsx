@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Avatar } from './Avatar';
 import { Button } from './Button';
+import { Dialog } from './Dialog';
 import { Search } from './Search';
 
 const SideBarStyles = styled.div`
@@ -38,6 +39,8 @@ const UserBlock = styled.div`
 	}
 `;
 
+const DilagosStyles = styled.div``;
+
 export const SideBar = () => {
 	return (
 		<SideBarStyles>
@@ -65,10 +68,12 @@ export const SideBar = () => {
 							/>
 						</svg>
 					</div>
-					<Search placeholder="Посик друзей" />
+					<Search placeholder="Search" />
 				</div>
 			</UserBlock>
-			<h1>SideBar</h1>
+			<DilagosStyles>
+				<Dialog />
+			</DilagosStyles>
 		</SideBarStyles>
 	);
 };

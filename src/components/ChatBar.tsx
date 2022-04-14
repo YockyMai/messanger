@@ -17,7 +17,7 @@ export const ChatBar = () => {
 		{
 			text: 'Жигуль купил на днях, что за аппарат!',
 			date: '11.08.2003',
-			username: 'Абема',
+			username: 'Данир',
 			isReaded: true,
 		},
 		{
@@ -31,6 +31,20 @@ export const ChatBar = () => {
 			date: '12.08.2003',
 			username: 'Valeriy Grigorev',
 			isMe: true,
+			attachments: [
+				{
+					filename: 'image.jpg',
+					src: 'https://kartinkin.net/uploads/posts/2021-10/1635257762_46-kartinkin-net-p-pop-art-gerl-krasivo-48.jpg',
+				},
+				{
+					filename: 'image.jpg',
+					src: 'https://avatars.mds.yandex.net/get-mpic/5257755/img_id7027421520302227778.jpeg/orig',
+				},
+				{
+					filename: 'image.jpg',
+					src: 'https://i.imgur.com/geX7lBe.jpg',
+				},
+			],
 		},
 	];
 
@@ -45,6 +59,7 @@ export const ChatBar = () => {
 						username={el.username}
 						isMe={el.isMe}
 						isReaded={el.isReaded}
+						attachments={el.attachments}
 					/>
 				))}
 			</div>
