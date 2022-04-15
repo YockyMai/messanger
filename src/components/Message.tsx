@@ -50,6 +50,7 @@ const MessageStyles = styled.div<MessageStylesProps>`
 				position: absolute;
 				transition: 0.3s;
 				transform: scale(5);
+				z-index: 1;
 			}
 			img {
 				transform: 0.3s;
@@ -85,6 +86,19 @@ export const Message: React.FC<MessageProps> = ({
 	isReaded,
 	attachments,
 }) => {
+	const [select, setSelect] = React.useState<number | null>(null);
+	const selectedImg = React.useRef<HTMLImageElement>(null);
+
+	React.useEffect(() => {});
+
+	const handleImageClock = (e: MouseEvent, index: number) => {
+		if (e.target !== selectedImg.current && select != null) {
+			setSelect(null);
+		} else {
+			setSelect(index);
+		}
+	};
+
 	return (
 		<MessageStyles isMe={isMe || false}>
 			<Avatar
@@ -102,7 +116,16 @@ export const Message: React.FC<MessageProps> = ({
 						{attachments &&
 							attachments.map((el: any, index) => (
 								<div key={`${index}__${el.src}`}>
-									<img src={el.src} />
+									<img
+										ref={selectedImg}
+										onClick={() =>
+											handleImageClock(el, index)
+										}
+										className={
+											index === select ? 'zoomed' : ''
+										}
+										src={el.src}
+									/>
 								</div>
 							))}
 					</div>
