@@ -2,7 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { Avatar } from './Avatar';
 import { Button } from './Button';
-import { Dialog } from './Dialog';
+import { DialogItem } from './DialogItem';
+import { Message } from './Message';
 import { Search } from './Search';
 
 const SideBarStyles = styled.div`
@@ -42,6 +43,16 @@ const UserBlock = styled.div`
 const DilagosStyles = styled.div``;
 
 export const SideBar = () => {
+	const dialogObj = {
+		user: {
+			fullname: 'Артур Шарифуллин',
+			avatar: 'https://sun9-15.userapi.com/impf/c638619/v638619462/15436/Wnw_NvpgzwY.jpg?size=1280x960&quality=96&sign=8cba5477e99bead50b2a4b43b80ac48b&type=album',
+			isOnline: true,
+		},
+		unreaded: 0,
+		message: 'Привет!',
+	};
+
 	return (
 		<SideBarStyles>
 			<UserBlock>
@@ -72,7 +83,11 @@ export const SideBar = () => {
 				</div>
 			</UserBlock>
 			<DilagosStyles>
-				<Dialog />
+				<DialogItem
+					message={dialogObj.message}
+					user={dialogObj.user}
+					unreaded={dialogObj.unreaded}
+				/>
 			</DilagosStyles>
 		</SideBarStyles>
 	);
