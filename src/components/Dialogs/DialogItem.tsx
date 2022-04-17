@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Avatar } from './Avatar';
-import emptyAvatar from '../assets/img/emptyAvatar.png';
+import { Avatar } from '../Avatar';
+import emptyAvatar from '../../assets/img/emptyAvatar.png';
+import { Time } from '../Time';
+import { format, isThisYear, isToday } from 'date-fns';
 
 interface DialgosStylesProps {
 	user: {
@@ -56,25 +58,24 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 		}
 
 		.dialog-other {
-			.time,
 			.unreaded-messages {
 				text-align: right;
 				font-size: 14px;
 				font-weight: 200;
 				margin-top: 3px;
 			}
-			.time {
-				color: #8e8a9c;
-			}
+
 			.unreaded-messages {
 				background-color: #171823;
 				border-radius: 1em;
 				color: #ffffffdc;
 				max-width: 62px;
+				float: right;
+				padding: 3px 10px 3px 10px;
 				p {
 					overflow: hidden;
 					text-align: center;
-					padding: 3px 5px 3px 5px;
+
 					text-overflow: ellipsis;
 				}
 			}
@@ -83,39 +84,47 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 `;
 
 interface DialogProps {
-	user: any;
-	message?: string;
+	message: {
+		user: any;
+		text: string;
+		created_at: Date;
+	};
 	unreaded: number;
 }
 
-export const DialogItem: React.FC<DialogProps> = ({
-	user,
-	message,
-	unreaded,
-}) => {
+export const DialogItem: React.FC<DialogProps> = ({ message, unreaded }) => {
+	const getMessageTime = (created_at: Date) => {
+		if (isToday(created_at)) return format(created_at, 'HH/m'); //Если сообщение написано сегодня
+		if (isThisYear(created_at)) return format(created_at, 'd cccc');
+		return format(created_at, 'd.MM.Y');
+	};
+	console.log(getMessageTime(message.created_at));
 	return (
-		<DialogsStyles user={user}>
+		<DialogsStyles user={message.user}>
 			<div className="dialog-avatar">
 				<Avatar
-					src={user.avatar ? user.avatar : emptyAvatar}
+					src={
+						message.user.avatar ? message.user.avatar : emptyAvatar
+					}
 					width="50px"
 					height="50px"
 				/>
 			</div>
-
 			<div className="dialog">
 				<div className="dialog-info">
-					<h4 className="dialog-title">{user.fullname}</h4>
+					<h4 className="dialog-title">{message.user.fullname}</h4>
 					<p className="dialogs-message">
-						{message != ''
-							? message
+						{message.text != ''
+							? message.text
 							: 'Write your first message...'}
 					</p>
 				</div>
 				<div className="dialog-other">
-					<p className="time">12:11</p>
+					<Time />
 					<div className="unreaded-messages">
-						{unreaded > 0 && <p>{unreaded}</p>}
+						{unreaded > 0 && (
+							<p>{unreaded > 99999 ? '+99999' : unreaded}</p>
+						)}
 					</div>
 				</div>
 			</div>
