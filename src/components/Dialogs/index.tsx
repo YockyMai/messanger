@@ -53,7 +53,11 @@ export const Dialogs = () => {
 	return (
 		<DilagosStyles>
 			{dialogs.map((obj) => (
-				<DialogItem message={obj.message} unreaded={obj.unreaded} />
+				<DialogItem
+					key={obj._id}
+					message={obj.message}
+					unreaded={obj.unreaded}
+				/>
 			))}
 		</DilagosStyles>
 	);

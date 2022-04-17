@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Avatar } from './Avatar';
 import messageRead from '../assets/img/messageRead.svg';
 import messageUnread from '../assets/img/messageUnread.svg';
+import imagePatch from '../store/imagePatch';
 
 interface MessageProps {
 	username: string;
@@ -44,14 +45,6 @@ const MessageStyles = styled.div<MessageStylesProps>`
 			justify-content: flex-start;
 			max-width: 400px;
 			border-radius: 0.5em;
-
-			.zoomed {
-				right: 0;
-				position: absolute;
-				transition: 0.3s;
-				transform: scale(5);
-				z-index: 1;
-			}
 			img {
 				transform: 0.3s;
 				cursor: pointer;
@@ -86,18 +79,7 @@ export const Message: React.FC<MessageProps> = ({
 	isReaded,
 	attachments,
 }) => {
-	const [select, setSelect] = React.useState<number | null>(null);
-	const selectedImg = React.useRef<HTMLImageElement>(null);
-
 	React.useEffect(() => {});
-
-	const handleImageClock = (e: MouseEvent, index: number) => {
-		if (e.target !== selectedImg.current && select != null) {
-			setSelect(null);
-		} else {
-			setSelect(index);
-		}
-	};
 
 	return (
 		<MessageStyles isMe={isMe || false}>
@@ -117,12 +99,8 @@ export const Message: React.FC<MessageProps> = ({
 							attachments.map((el: any, index) => (
 								<div key={`${index}__${el.src}`}>
 									<img
-										ref={selectedImg}
 										onClick={() =>
-											handleImageClock(el, index)
-										}
-										className={
-											index === select ? 'zoomed' : ''
+											imagePatch.setImagePatch(el.src)
 										}
 										src={el.src}
 									/>

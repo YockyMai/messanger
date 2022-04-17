@@ -2,6 +2,7 @@ import React from 'react';
 import { SideBar } from '../components/SideBar';
 import { ChatBar } from '../components/ChatBar';
 import styled from 'styled-components';
+import { ViewImage } from '../components/ViewImage';
 
 const MainPage = styled.div`
 	display: grid;
@@ -15,6 +16,7 @@ export const Main = () => {
 		<MainPage>
 			<SideBar />
 			<ChatBar />
+			<ViewImage />
 		</MainPage>
 	);
 };
