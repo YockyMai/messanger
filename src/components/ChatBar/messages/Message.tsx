@@ -1,17 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Avatar } from './Avatar';
-import messageRead from '../assets/img/messageRead.svg';
-import messageUnread from '../assets/img/messageUnread.svg';
-import imagePatch from '../store/imagePatch';
-
+import imagePatch from '../../../store/imagePatch';
+import { Avatar } from '../../Avatar';
+import messageRead from '../../../assets/img/messageRead.svg';
+import messageUnread from '../../../assets/img/messageUnread.svg';
+import { AudioMessage } from './AudioMessage';
 interface MessageProps {
 	username: string;
-	text: string;
+	text?: string | undefined;
 	date: string;
 	isMe?: boolean;
 	isReaded?: boolean;
 	attachments: object[] | undefined;
+	audio?: string;
 }
 
 interface MessageStylesProps {
@@ -49,7 +50,6 @@ const MessageStyles = styled.div<MessageStylesProps>`
 				transform: 0.3s;
 				cursor: pointer;
 				margin-left: 10px;
-				width: 100px;
 				height: 100px;
 				border-radius: 0.3em;
 				transform: scale(1);
@@ -78,6 +78,7 @@ export const Message: React.FC<MessageProps> = ({
 	isMe,
 	isReaded,
 	attachments,
+	audio,
 }) => {
 	React.useEffect(() => {});
 
@@ -88,35 +89,49 @@ export const Message: React.FC<MessageProps> = ({
 				width="50px"
 				height="50px"
 			/>
-			<div className="message-box">
-				<a href="#">
-					<h4>{isMe ? 'You' : username}</h4>
-				</a>
-				<div className="message-content">
-					<p>{text}</p>
-					<div className={attachments && 'attachments'}>
-						{attachments &&
-							attachments.map((el: any, index) => (
-								<div key={`${index}__${el.src}`}>
-									<img
-										onClick={() =>
-											imagePatch.setImagePatch(el.src)
-										}
-										src={el.src}
-									/>
-								</div>
-							))}
+			{audio ? (
+				<div className="message-box">
+					<AudioMessage />
+					<div className="message-info">
+						<span>{date}</span>
+						<img
+							src={isReaded ? messageRead : messageUnread}
+							alt="checked message"
+							className="checkedMsgImg"
+						/>
 					</div>
 				</div>
-				<div className="message-info">
-					<span>{date}</span>
-					<img
-						src={isReaded ? messageRead : messageUnread}
-						alt="checked message"
-						className="checkedMsgImg"
-					/>
+			) : (
+				<div className="message-box">
+					<a href="#">
+						<h4>{isMe ? 'You' : username}</h4>
+					</a>
+					<div className="message-content">
+						{text && <p>{text}</p>}
+						<div className={attachments && 'attachments'}>
+							{attachments &&
+								attachments.map((el: any, index) => (
+									<div key={`${index}__${el.src}`}>
+										<img
+											onClick={() =>
+												imagePatch.setImagePatch(el.src)
+											}
+											src={el.src}
+										/>
+									</div>
+								))}
+						</div>
+					</div>
+					<div className="message-info">
+						<span>{date}</span>
+						<img
+							src={isReaded ? messageRead : messageUnread}
+							alt="checked message"
+							className="checkedMsgImg"
+						/>
+					</div>
 				</div>
-			</div>
+			)}
 		</MessageStyles>
 	);
 };

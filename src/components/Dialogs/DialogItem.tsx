@@ -94,7 +94,7 @@ interface DialogProps {
 
 export const DialogItem: React.FC<DialogProps> = ({ message, unreaded }) => {
 	const getMessageTime = (created_at: Date) => {
-		if (isToday(created_at)) return format(created_at, 'HH/m'); //Если сообщение написано сегодня
+		if (isToday(created_at)) return format(created_at, 'HH:mm'); //Если сообщение написано сегодня
 		if (isThisYear(created_at)) return format(created_at, 'd cccc');
 		return format(created_at, 'd.MM.Y');
 	};
@@ -120,7 +120,7 @@ export const DialogItem: React.FC<DialogProps> = ({ message, unreaded }) => {
 					</p>
 				</div>
 				<div className="dialog-other">
-					<Time />
+					<Time time={getMessageTime(message.created_at)} />
 					<div className="unreaded-messages">
 						{unreaded > 0 && (
 							<p>{unreaded > 99999 ? '+99999' : unreaded}</p>
