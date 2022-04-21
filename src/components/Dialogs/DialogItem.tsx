@@ -98,7 +98,6 @@ export const DialogItem: React.FC<DialogProps> = ({ message, unreaded }) => {
 		if (isThisYear(created_at)) return format(created_at, 'd cccc');
 		return format(created_at, 'd.MM.Y');
 	};
-	console.log(getMessageTime(message.created_at));
 	return (
 		<DialogsStyles user={message.user}>
 			<div className="dialog-avatar">
