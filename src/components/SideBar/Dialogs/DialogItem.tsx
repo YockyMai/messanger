@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Avatar } from '../Avatar';
-import emptyAvatar from '../../assets/img/emptyAvatar.png';
-import { Time } from '../Time';
+import { Avatar } from '../../Avatar';
+import emptyAvatar from '../../../assets/img/emptyAvatar.png';
+import { Time } from '../../Time';
 import { format, isThisYear, isToday } from 'date-fns';
 
 interface DialgosStylesProps {

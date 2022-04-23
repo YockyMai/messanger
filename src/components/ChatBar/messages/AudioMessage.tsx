@@ -1,7 +1,6 @@
 import React, { RefObject } from 'react';
 import styled from 'styled-components';
 import audioSvg from '../../../assets/img/audio.svg';
-import testAudioSound from '../../../assets/sounds/pamparam.mp3';
 import number from '../../../utils/helpers/converCurrentTime';
 interface AudioStylesProps {
 	play?: boolean;
@@ -24,7 +23,7 @@ const AudioMessageStyles = styled.div<AudioStylesProps>`
 	}
 `;
 
-const AudioMessageInfo = styled.div<AudioMessageProps>`
+const AudioMessageInfo = styled.div<AudioStylesProps>`
 	position: absolute;
 	left: 50%;
 	top: 50%;
@@ -77,9 +76,11 @@ const Play = styled.button<AudioStylesProps>`
 	}
 `;
 
-interface AudioMessageProps {}
+interface AudioMessageProps {
+	audio: any;
+}
 
-export const AudioMessage: React.FC<AudioMessageProps> = () => {
+export const AudioMessage: React.FC<AudioMessageProps> = ({ audio }) => {
 	const [isPlaying, setIsPlaying] = React.useState(false);
 	const [progressBar, setProgressBar] = React.useState(0);
 	const [currentTime, setCurrentTime] = React.useState(0);
@@ -144,7 +145,7 @@ export const AudioMessage: React.FC<AudioMessageProps> = () => {
 
 	return (
 		<AudioMessageStyles onClick={togglePlay}>
-			<audio ref={audioRef} src={testAudioSound} preload="metadata" />
+			<audio ref={audioRef} src={audio} preload="metadata" />
 			<AudioMessageInfo>
 				<Play play={isPlaying} />
 				<img src={audioSvg} alt="Audio" />

@@ -8,15 +8,16 @@ const MainPage = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 3fr;
 	min-height: 100vh;
-	width: 100%;
 `;
 
 export const Main = () => {
 	return (
-		<MainPage>
-			<SideBar />
-			<ChatBar />
-			<ViewImage />
-		</MainPage>
+		<>
+			<MainPage>
+				<SideBar />
+				<ChatBar />
+				<ViewImage />
+			</MainPage>
+		</>
 	);
 };

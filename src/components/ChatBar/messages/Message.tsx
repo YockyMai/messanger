@@ -91,7 +91,10 @@ export const Message: React.FC<MessageProps> = ({
 			/>
 			{audio ? (
 				<div className="message-box">
-					<AudioMessage />
+					<a href="#">
+						<h4>{isMe ? 'You' : username}</h4>
+					</a>
+					<AudioMessage audio={audio} />
 					<div className="message-info">
 						<span>{date}</span>
 						<img

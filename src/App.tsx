@@ -25,7 +25,7 @@ function App() {
 		<AppWraper>
 			<Routes>
 				<Route path="/registration" element={<Registration />} />
-				<Route path="/" element={<Main />} />
+				<Route path="/im" element={<Main />} />
 				<Route path="/login" element={<Login />} />
 			</Routes>
 		</AppWraper>

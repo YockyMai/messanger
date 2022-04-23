@@ -1,10 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Dialogs } from './Dialogs';
-import { Search } from './Search';
+import { Search } from '../Search';
 
 const SideBarStyles = styled.div`
 	background-color: #1c1d2c;
+	position: sticky;
+	height: 100vh;
+	top: 0;
 `;
 
 const UserBlock = styled.div`

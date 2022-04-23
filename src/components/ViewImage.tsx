@@ -7,7 +7,7 @@ const ViewImageStyles = styled.div`
 	width: 100%;
 	height: 100%;
 	position: fixed;
-	z-index: 2;
+	z-index: 4;
 	img {
 		z-index: 1;
 		border-radius: 1em;
