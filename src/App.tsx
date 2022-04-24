@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
 import { Main } from './pages/Main';
 import { Registration } from './pages/Registration';
@@ -27,6 +27,7 @@ function App() {
 				<Route path="/registration" element={<Registration />} />
 				<Route path="/im" element={<Main />} />
 				<Route path="/login" element={<Login />} />
+				<Route path="/" element={<Navigate to="/im" replace />} />
 			</Routes>
 		</AppWraper>
 	);
