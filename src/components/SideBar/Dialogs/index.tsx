@@ -1,3 +1,4 @@
+import { dialogs } from '../../../utils/api';
 import React from 'react';
 import styled from 'styled-components';
 import { DialogItem } from './DialogItem';
@@ -7,8 +8,28 @@ const DilagosStyles = styled.div`
 	overflow-y: auto;
 `;
 
+interface dialogsItem {
+	_id: string;
+	unreaded: 1;
+	message: {
+		user: any;
+		text: string;
+		created_at: Date;
+	};
+	// message: {
+	// 	user: {
+	// 		_id: string;
+	// 		fullname: string;
+	// 		avatar: string | null;
+	// 		isOnline: boolean;
+	// 	};
+	// 	text: string;
+	// 	created_at: string;
+	// };
+}
+
 export const Dialogs = () => {
-	const dialogs = [
+	const dialogsTest = [
 		{
 			_id: Math.random(), //id from mongoDB
 			unreaded: 1,
@@ -95,9 +116,20 @@ export const Dialogs = () => {
 			},
 		},
 	];
+
+	const [dialogsItems, setDialogsItems] = React.useState<Array<dialogsItem>>(
+		[],
+	);
+
+	React.useEffect(() => {
+		(async () => {
+			const response = await dialogs.getAll();
+			setDialogsItems(response.data);
+		})();
+	}, []);
 	return (
 		<DilagosStyles>
-			{dialogs.map((obj) => (
+			{dialogsItems.map((obj) => (
 				<DialogItem
 					key={obj._id}
 					message={obj.message}

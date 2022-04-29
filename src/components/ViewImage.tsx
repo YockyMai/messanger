@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import styled from 'styled-components';
-import imagePatch from '../store/imagePatch';
+import imagePatch from '../stores/imagePatch';
 
 const ViewImageStyles = styled.div`
 	width: 100%;

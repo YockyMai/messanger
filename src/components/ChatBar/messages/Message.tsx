@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import imagePatch from '../../../store/imagePatch';
+import imagePatch from '../../../stores/imagePatch';
 import { Avatar } from '../../Avatar';
 import messageRead from '../../../assets/img/messageRead.svg';
 import messageUnread from '../../../assets/img/messageUnread.svg';
@@ -28,6 +28,16 @@ const MessageStyles = styled.div<MessageStylesProps>`
 		}
 	}
 	margin-bottom: 15px;
+	.audio-box {
+		margin-left: 10px;
+		span {
+			padding-left: 15px;
+			font-weight: 400;
+			font-size: 12px;
+			color: #a8a8a8;
+			margin-right: 10px;
+		}
+	}
 	.message-box {
 		position: relative;
 		margin-left: 8px;
@@ -90,10 +100,7 @@ export const Message: React.FC<MessageProps> = ({
 				height="50px"
 			/>
 			{audio ? (
-				<div className="message-box">
-					<a href="#">
-						<h4>{isMe ? 'You' : username}</h4>
-					</a>
+				<div className="audio-box">
 					<AudioMessage audio={audio} />
 					<div className="message-info">
 						<span>{date}</span>
@@ -104,7 +111,7 @@ export const Message: React.FC<MessageProps> = ({
 						/>
 					</div>
 				</div>
-			) : (
+			) : text ? (
 				<div className="message-box">
 					<a href="#">
 						<h4>{isMe ? 'You' : username}</h4>
@@ -134,6 +141,8 @@ export const Message: React.FC<MessageProps> = ({
 						/>
 					</div>
 				</div>
+			) : (
+				<div className="file-box"></div>
 			)}
 		</MessageStyles>
 	);

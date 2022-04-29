@@ -19,6 +19,7 @@ const SendMessageStyle = styled.div`
 	}
 	.input-div {
 		min-height: 40px;
+		max-height: 300px;
 		width: 100%;
 		font-size: 18px;
 		padding: 5px 100px 5px 50px;
@@ -35,6 +36,11 @@ const SendMessageStyle = styled.div`
 			content: attr(data-placeholder);
 			color: gray;
 			cursor: text;
+		}
+
+		overflow: auto;
+		&::-webkit-scrollbar {
+			display: none;
 		}
 	}
 
@@ -109,6 +115,14 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 	}, []);
 	console.log(showSend);
 
+	const handleSetMessage = (e: any) => {
+		setMessage(e.currentTarget.textContent);
+		if (inputDiv.current && inputDiv.current.clientHeight >= 500) {
+		}
+		e.currentTarget.textContent != ''
+			? setShowSend(true)
+			: setShowSend(false);
+	};
 	return (
 		<SendMessageStyle>
 			<div
@@ -119,10 +133,7 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 				role="textbox"
 				aria-multiline
 				onInput={(e) => {
-					setMessage(e.currentTarget.textContent);
-					e.currentTarget.textContent != ''
-						? setShowSend(true)
-						: setShowSend(false);
+					handleSetMessage(e as any);
 				}}
 			/>
 

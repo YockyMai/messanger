@@ -95,9 +95,13 @@ const ControlPanel = styled.div`
 `;
 
 const ChatSettingsPopup = styled.div<ChatSettingsPopupProps>`
-	${(props) => (props.isOpen ? 'display: block;' : 'display: none;')}
+	${(props) =>
+		props.isOpen
+			? `display: block; opacity: 1 !important; transition: 1s all;`
+			: 'display: none; opacity: 0;'}
 	position: absolute;
 	z-index: 100;
+	transition: 1s all;
 	right: 10px;
 	top: 40px;
 	width: 200px;

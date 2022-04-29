@@ -52,6 +52,7 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 				font-size: 16px;
 				font-weight: 200;
 				color: #d6d6d6;
+				white-space: nowrap;
 				text-overflow: ellipsis;
 				overflow: hidden;
 			}
@@ -93,11 +94,11 @@ interface DialogProps {
 }
 
 export const DialogItem: React.FC<DialogProps> = ({ message, unreaded }) => {
-	const getMessageTime = (created_at: Date) => {
-		if (isToday(created_at)) return format(created_at, 'HH:mm'); //Если сообщение написано сегодня
-		if (isThisYear(created_at)) return format(created_at, 'd cccc');
-		return format(created_at, 'd.MM.Y');
-	};
+	// const getMessageTime = (created_at: Date) => {
+	// 	if (isToday(created_at)) return format(created_at, 'HH:mm'); //Если сообщение написано сегодня
+	// 	if (isThisYear(created_at)) return format(created_at, 'd cccc');
+	// 	return format(created_at, 'd.MM.Y');
+	// };
 	return (
 		<DialogsStyles user={message.user}>
 			<div className="dialog-avatar">
@@ -119,12 +120,14 @@ export const DialogItem: React.FC<DialogProps> = ({ message, unreaded }) => {
 					</p>
 				</div>
 				<div className="dialog-other">
-					<Time time={getMessageTime(message.created_at)} />
-					<div className="unreaded-messages">
-						{unreaded > 0 && (
-							<p>{unreaded > 99999 ? '+99999' : unreaded}</p>
-						)}
-					</div>
+					{/* <Time time={getMessageTime(message.created_at)} /> */}
+					{unreaded > 0 && (
+						<div className="unreaded-messages">
+							{unreaded > 0 && (
+								<p>{unreaded > 99999 ? '+99999' : unreaded}</p>
+							)}
+						</div>
+					)}
 				</div>
 			</div>
 		</DialogsStyles>
