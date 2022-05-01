@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { Dialogs } from './Dialogs';
 import { Search } from '../Search';
+import { dialogs } from '../../utils/api';
+import { dialogsItem } from '../../types';
 
 const SideBarStyles = styled.div`
 	background-color: #1c1d2c;
@@ -41,6 +43,25 @@ const UserBlock = styled.div`
 `;
 
 export const SideBar = () => {
+	const [dialogsItems, setDialogsItems] = React.useState<Array<dialogsItem>>(
+		[],
+	);
+	const [searchValue, setSearchValue] = React.useState('');
+	const [loaded, setLoaded] = React.useState(false);
+	React.useEffect(() => {
+		(async () => {
+			setLoaded(false);
+			const response = await dialogs.getAll();
+			setDialogsItems(response.data);
+			setLoaded(true);
+		})();
+	}, []);
+
+	const filteredDialogs = dialogsItems.filter(item =>
+		item.message.user.fullname
+			.toLowerCase()
+			.includes(searchValue.toLowerCase()),
+	);
 	return (
 		<SideBarStyles>
 			<UserBlock>
@@ -67,10 +88,10 @@ export const SideBar = () => {
 							/>
 						</svg>
 					</div>
-					<Search placeholder="Search" />
+					<Search setValue={setSearchValue} placeholder="Search" />
 				</div>
 			</UserBlock>
-			<Dialogs />
+			<Dialogs loaded={loaded} dialogsItems={filteredDialogs} />
 		</SideBarStyles>
 	);
 };

@@ -1,6 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import volumeMuteSvg from '../../assets/img/volume-mute.svg';
+import leaveChatSvg from '../../assets/img/leaveChat.svg';
+import pinSvg from '../../assets/img/pin.svg';
+import blockSvg from '../../assets/img/block.svg';
+import { Search } from '../Search';
 
 const ChatBarHeaderStyles = styled.div`
 	z-index: 3;
@@ -48,8 +52,17 @@ const Status = styled.span`
 	}
 `;
 
+const ControlPanelBox = styled.div`
+	display: flex;
+	align-items: center;
+
+	width: 100%;
+	justify-content: flex-end;
+`;
+
 const ControlPanel = styled.div`
 	width: 70px;
+	height: 100%;
 	cursor: pointer;
 	&:hover {
 		transition: 0.1s;
@@ -95,7 +108,7 @@ const ControlPanel = styled.div`
 `;
 
 const ChatSettingsPopup = styled.div<ChatSettingsPopupProps>`
-	${(props) =>
+	${props =>
 		props.isOpen
 			? `display: block; opacity: 1 !important; transition: 1s all;`
 			: 'display: none; opacity: 0;'}
@@ -108,6 +121,12 @@ const ChatSettingsPopup = styled.div<ChatSettingsPopupProps>`
 	max-width: 350px;
 	height: auto;
 	border-radius: 0.3em;
+	.leave-chat,
+	.block-chat {
+		p {
+			color: #e25c5c;
+		}
+	}
 	li {
 		background-color: #1c1d2c;
 		transition: 0.1s;
@@ -123,7 +142,7 @@ const ChatSettingsPopup = styled.div<ChatSettingsPopupProps>`
 		}
 		img {
 			margin-right: 10px;
-			width: 30px;
+			width: 20px;
 		}
 	}
 `;
@@ -132,12 +151,17 @@ interface ChatSettingsPopupProps {
 	isOpen: boolean;
 }
 
-interface ChatBarHeader {}
+interface ChatBarHeader {
+	setSearchValue: React.Dispatch<React.SetStateAction<string>>;
+	searchValue: string;
+}
 
-export const ChatBarHeader: React.FC<ChatBarHeader> = () => {
+export const ChatBarHeader: React.FC<ChatBarHeader> = ({
+	setSearchValue,
+	searchValue,
+}) => {
 	const [isOpen, setIsOpen] = React.useState(false);
 	const chatSettingsPopup = React.useRef(null);
-	console.log(isOpen);
 	React.useEffect(() => {
 		document.body.addEventListener('click', handleOutsideClick);
 	}, []);
@@ -155,29 +179,44 @@ export const ChatBarHeader: React.FC<ChatBarHeader> = () => {
 					<p>online</p>
 				</Status>
 			</div>
-			<ControlPanel ref={chatSettingsPopup}>
-				<div
-					onClick={() => {
-						setIsOpen(!isOpen);
-					}}>
-					<span />
+
+			<ControlPanelBox>
+				<div>
+					<Search
+						value={searchValue}
+						setValue={setSearchValue}
+						height="40px"
+						width="300px"
+						focusWidth="500px"
+						bgColor="#1C1D2C"
+						placeholder="Chat Search"
+					/>
 				</div>
 
-				<ChatSettingsPopup isOpen={isOpen}>
-					<li>
-						<img src={volumeMuteSvg} alt="" /> Mute
-					</li>
-					<li>
-						<img src={volumeMuteSvg} alt="" /> Mute
-					</li>
-					<li>
-						<img src={volumeMuteSvg} alt="" /> Mute
-					</li>
-					<li>
-						<img src={volumeMuteSvg} alt="" /> Mute
-					</li>
-				</ChatSettingsPopup>
-			</ControlPanel>
+				<ControlPanel ref={chatSettingsPopup}>
+					<div
+						onClick={() => {
+							setIsOpen(!isOpen);
+						}}>
+						<span />
+					</div>
+
+					<ChatSettingsPopup isOpen={isOpen}>
+						<li>
+							<img src={volumeMuteSvg} alt="" /> <p>Mute</p>
+						</li>
+						<li>
+							<img src={pinSvg} alt="" /> <p>Pin</p>
+						</li>
+						<li className="block-chat">
+							<img src={blockSvg} alt="" /> <p>Block user</p>
+						</li>
+						<li className="leave-chat">
+							<img src={leaveChatSvg} alt="" /> <p>Leave</p>
+						</li>
+					</ChatSettingsPopup>
+				</ControlPanel>
+			</ControlPanelBox>
 		</ChatBarHeaderStyles>
 	);
 };

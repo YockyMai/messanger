@@ -49,7 +49,7 @@ const AudioProgress = styled.div<AudioStylesProps>`
 	width: 100% !important;
 	background-color: #222547;
 	transition: left 0.25s linear;
-	${(props) =>
+	${props =>
 		props.progressBar && props.progressBar > 0
 			? `left: ${props.progressBar}%;`
 			: 'left: 0'}
@@ -65,7 +65,7 @@ const Play = styled.button<AudioStylesProps>`
 	cursor: pointer;
 	border-style: solid;
 	border-width: 12px 0 12px 20px;
-	${(props) =>
+	${props =>
 		props.play &&
 		`height: 20px;
 		border-style: double;
@@ -85,7 +85,6 @@ export const AudioMessage: React.FC<AudioMessageProps> = ({ audio }) => {
 	const [progressBar, setProgressBar] = React.useState(0);
 	const [currentTime, setCurrentTime] = React.useState(0);
 	const audioRef = React.useRef<HTMLAudioElement>(null);
-	console.log(currentTime);
 
 	React.useEffect(() => {
 		if (audioRef.current) {

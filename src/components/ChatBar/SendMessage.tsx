@@ -113,7 +113,6 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 	React.useEffect(() => {
 		inputDiv && inputDiv.current && inputDiv.current.focus();
 	}, []);
-	console.log(showSend);
 
 	const handleSetMessage = (e: any) => {
 		setMessage(e.currentTarget.textContent);
@@ -132,7 +131,7 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 				contentEditable
 				role="textbox"
 				aria-multiline
-				onInput={(e) => {
+				onInput={e => {
 					handleSetMessage(e as any);
 				}}
 			/>
