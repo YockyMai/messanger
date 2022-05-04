@@ -4,21 +4,28 @@ import { Avatar } from '../../Avatar';
 import emptyAvatar from '../../../assets/img/emptyAvatar.png';
 import { Time } from '../../Time';
 import { format, isThisYear, isToday } from 'date-fns';
+import dialgosStore from '../../../stores/dialgosStore';
+import { observer } from 'mobx-react-lite';
 
 interface DialgosStylesProps {
 	user: {
 		isOnline: boolean;
 	};
+	_id: string;
+	selectedId: string;
 }
 
 const DialogsStyles = styled.div<DialgosStylesProps>`
 	cursor: pointer;
+
 	display: flex;
 	align-items: center;
 	padding: 5px 8px 5px 8px;
+	background-color: ${props =>
+		props._id == props.selectedId && '#171823'} !important;
 	.dialog-avatar {
 		position: relative;
-		${(props) =>
+		${props =>
 			props.user.isOnline
 				? `&::before {
 			position: absolute;
@@ -35,7 +42,7 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 				: ``}
 	}
 	&:hover {
-		background-color: #171823;
+		background-color: #2a2b3f;
 	}
 	.dialog {
 		padding-left: 10px;
@@ -85,51 +92,68 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 `;
 
 interface DialogProps {
+	_id: string;
 	message: {
 		user: any;
 		text: string;
 		created_at: Date;
 	};
 	unreaded: number;
+	setOnSelect: (_id: string) => void;
 }
 
-export const DialogItem: React.FC<DialogProps> = ({ message, unreaded }) => {
-	// const getMessageTime = (created_at: Date) => {
-	// 	if (isToday(created_at)) return format(created_at, 'HH:mm'); //Если сообщение написано сегодня
-	// 	if (isThisYear(created_at)) return format(created_at, 'd cccc');
-	// 	return format(created_at, 'd.MM.Y');
-	// };
-	return (
-		<DialogsStyles user={message.user}>
-			<div className="dialog-avatar">
-				<Avatar
-					src={
-						message.user.avatar ? message.user.avatar : emptyAvatar
-					}
-					width="50px"
-					height="50px"
-				/>
-			</div>
-			<div className="dialog">
-				<div className="dialog-info">
-					<h4 className="dialog-title">{message.user.fullname}</h4>
-					<p className="dialogs-message">
-						{message.text != ''
-							? message.text
-							: 'Write your first message...'}
-					</p>
+export const DialogItem: React.FC<DialogProps> = observer(
+	({ message, unreaded, setOnSelect, _id }) => {
+		// const getMessageTime = (created_at: Date) => {
+		// 	if (isToday(created_at)) return format(created_at, 'HH:mm'); //Если сообщение написано сегодня
+		// 	if (isThisYear(created_at)) return format(created_at, 'd cccc');
+		// 	return format(created_at, 'd.MM.Y');
+		// };
+
+		return (
+			<DialogsStyles
+				selectedId={dialgosStore.currentDialog}
+				_id={_id}
+				user={message.user}
+				onClick={() => {
+					setOnSelect(_id);
+				}}>
+				<div className="dialog-avatar">
+					<Avatar
+						src={
+							message.user.avatar
+								? message.user.avatar
+								: emptyAvatar
+						}
+						width="50px"
+						height="50px"
+					/>
 				</div>
-				<div className="dialog-other">
-					{/* <Time time={getMessageTime(message.created_at)} /> */}
-					{unreaded > 0 && (
-						<div className="unreaded-messages">
-							{unreaded > 0 && (
-								<p>{unreaded > 99999 ? '+99999' : unreaded}</p>
-							)}
-						</div>
-					)}
+				<div className="dialog">
+					<div className="dialog-info">
+						<h4 className="dialog-title">
+							{message.user.fullname}
+						</h4>
+						<p className="dialogs-message">
+							{message.text != ''
+								? message.text
+								: 'Write your first message...'}
+						</p>
+					</div>
+					<div className="dialog-other">
+						{/* <Time time={getMessageTime(message.created_at)} /> */}
+						{unreaded > 0 && (
+							<div className="unreaded-messages">
+								{unreaded > 0 && (
+									<p>
+										{unreaded > 99999 ? '+99999' : unreaded}
+									</p>
+								)}
+							</div>
+						)}
+					</div>
 				</div>
-			</div>
-		</DialogsStyles>
-	);
-};
+			</DialogsStyles>
+		);
+	},
+);

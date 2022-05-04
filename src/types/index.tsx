@@ -18,3 +18,15 @@ export interface dialogsItem {
 	// 	created_at: string;
 	// };
 }
+export interface messageItem {
+	_id: string;
+	text: string;
+	attachments: [] | null;
+	createdAt: string;
+	user: {
+		_id: string;
+		fullname: string;
+		avatar: string | null;
+	};
+	dialogs: string;
+}

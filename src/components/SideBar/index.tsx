@@ -2,8 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { Dialogs } from './Dialogs';
 import { Search } from '../Search';
-import { dialogs } from '../../utils/api';
 import { dialogsItem } from '../../types';
+import { observer } from 'mobx-react-lite';
+import dialogsStore from '../../stores/dialgosStore';
 
 const SideBarStyles = styled.div`
 	background-color: #1c1d2c;
@@ -42,22 +43,21 @@ const UserBlock = styled.div`
 	}
 `;
 
-export const SideBar = () => {
+export const SideBar = observer(() => {
 	const [dialogsItems, setDialogsItems] = React.useState<Array<dialogsItem>>(
 		[],
 	);
 	const [searchValue, setSearchValue] = React.useState('');
 	const [loaded, setLoaded] = React.useState(false);
 	React.useEffect(() => {
-		(async () => {
+		(() => {
 			setLoaded(false);
-			const response = await dialogs.getAll();
-			setDialogsItems(response.data);
+			dialogsStore.fetchDialogs();
 			setLoaded(true);
 		})();
 	}, []);
 
-	const filteredDialogs = dialogsItems.filter(item =>
+	const filteredDialogs = dialogsStore.dialogues.filter(item =>
 		item.message.user.fullname
 			.toLowerCase()
 			.includes(searchValue.toLowerCase()),
@@ -94,4 +94,4 @@ export const SideBar = () => {
 			<Dialogs loaded={loaded} dialogsItems={filteredDialogs} />
 		</SideBarStyles>
 	);
-};
+});

@@ -3,6 +3,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { DialogItem } from './DialogItem';
 import { dialogsItem } from '../../../types';
+import dialgosStore from '../../../stores/dialgosStore';
+import messagesStore from '../../../stores/messagesStore';
 
 const DilagosStyles = styled.div`
 	overflow-y: auto;
@@ -27,18 +29,25 @@ const NoMatchesFound = styled.div`
 `;
 
 interface DialogsProps {
-	dialogsItems: Array<dialogsItem>;
+	dialogsItems: dialogsItem[];
 	loaded: boolean;
 }
 
 export const Dialogs: React.FC<DialogsProps> = ({ dialogsItems, loaded }) => {
+	const setOnSelect = (_id: string) => {
+		dialgosStore.setCurrentDialog(_id);
+		console.log(_id);
+	};
+
 	return (
 		<DilagosStyles>
 			{dialogsItems.length > 0 ? (
 				<>
 					{dialogsItems.map(obj => (
 						<DialogItem
+							setOnSelect={setOnSelect}
 							key={obj._id}
+							_id={obj._id}
 							message={obj.message}
 							unreaded={obj.unreaded}
 						/>

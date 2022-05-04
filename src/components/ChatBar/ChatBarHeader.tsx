@@ -8,13 +8,14 @@ import { Search } from '../Search';
 
 const ChatBarHeaderStyles = styled.div`
 	z-index: 3;
-	height: 50px;
+	height: 70px;
 	width: 75%;
 	position: fixed;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 	background-color: #171823;
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 	padding-left: 10px;
 	div {
 		h3 {
@@ -55,7 +56,7 @@ const Status = styled.span`
 const ControlPanelBox = styled.div`
 	display: flex;
 	align-items: center;
-
+	height: 100%;
 	width: 100%;
 	justify-content: flex-end;
 `;

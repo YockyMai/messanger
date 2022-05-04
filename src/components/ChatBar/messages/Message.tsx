@@ -43,7 +43,7 @@ const MessageStyles = styled.div<MessageStylesProps>`
 		margin-left: 8px;
 		border-radius: 0.3em;
 		padding: 5px 15px 5px 15px;
-		background-color: ${(props) => (props.isMe ? '#393b5cb2' : '#1c1d2c')};
+		background-color: ${props => (props.isMe ? '#393b5cb2' : '#1c1d2c')};
 		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 		max-width: 50%;
 		.checkedMsgImg {
@@ -77,7 +77,7 @@ const MessageStyles = styled.div<MessageStylesProps>`
 		}
 	}
 	h4 {
-		color: ${(props) => (props.isMe ? '#8a8a8a' : '#e25c5c')};
+		color: ${props => (props.isMe ? '#8a8a8a' : '#e25c5c')};
 	}
 `;
 

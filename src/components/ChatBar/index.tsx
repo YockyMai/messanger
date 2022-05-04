@@ -6,6 +6,9 @@ import { Message } from './messages/Message';
 import { SendMessage } from './SendMessage';
 import audio from '../../assets/sounds/pamparam.mp3'; //testaudio
 import { ChatBarHeader } from './ChatBarHeader';
+import { observer } from 'mobx-react-lite';
+import messagesStore from '../../stores/messagesStore';
+import dialgosStore from '../../stores/dialgosStore';
 
 const ChatBarStyles = styled.div`
 	height: 100%;
@@ -34,7 +37,7 @@ const MessageInfo = styled.div`
 	}
 `;
 
-export const ChatBar = () => {
+export const ChatBar = observer(() => {
 	const messageData = [
 		{
 			text: 'Жигуль купил на днях, что за аппарат!',
@@ -140,9 +143,15 @@ export const ChatBar = () => {
 
 	const [searchValue, setSearchValue] = React.useState('');
 
-	const filteredMessages = messageData.filter(item =>
-		item.text?.toLowerCase().includes(searchValue.toLowerCase()),
-	);
+	const filteredMessages =
+		searchValue.length > 0
+			? messageData.filter(
+					item =>
+						item.text
+							?.toLowerCase()
+							.includes(searchValue.toLowerCase()) && !item.audio,
+			  )
+			: messageData;
 
 	return (
 		<ChatBarStyles>
@@ -175,4 +184,4 @@ export const ChatBar = () => {
 			<SendMessage />
 		</ChatBarStyles>
 	);
-};
+});

@@ -1,1 +1,2 @@
-export { default as dialogs } from './dilagos';
+export { default as dialogs } from './dialogs';
+export { default as messages } from './messages';

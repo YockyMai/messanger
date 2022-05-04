@@ -193,9 +193,9 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 							<path
 								d="M1 16.1406C1 16.1406 1 25.5469 11.75 25.5469M11.75 25.5469C22.5 25.5469 22.5 16.1406 22.5 16.1406M11.75 25.5469V30V31M11.75 1C6.375 1 6.375 6 6.375 6V14.7969C6.375 14.7969 6.375 20.1719 11.75 20.1719C17.125 20.1719 17.125 14.7969 17.125 14.7969V6C17.125 6 17.125 1 11.75 1Z"
 								stroke="#969696"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
 							/>
 						</svg>
 					</span>
