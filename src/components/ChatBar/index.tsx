@@ -145,13 +145,13 @@ export const ChatBar = observer(() => {
 
 	const filteredMessages =
 		searchValue.length > 0
-			? messageData.filter(
+			? messagesStore.currentMessages.filter(
 					item =>
 						item.text
 							?.toLowerCase()
 							.includes(searchValue.toLowerCase()) && !item.audio,
 			  )
-			: messageData;
+			: messagesStore.currentMessages;
 
 	return (
 		<ChatBarStyles>
@@ -166,12 +166,8 @@ export const ChatBar = observer(() => {
 							<Message
 								key={index}
 								text={el.text}
-								date={el.date}
-								username={el.username}
-								isMe={el.isMe}
-								isReaded={el.isReaded}
-								attachments={el.attachments}
-								audio={el.audio}
+								date={el.createdAt}
+								fullname={el.user.fullname}
 							/>
 						))}
 					</>

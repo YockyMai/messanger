@@ -5,13 +5,14 @@ import { Avatar } from '../../Avatar';
 import messageRead from '../../../assets/img/messageRead.svg';
 import messageUnread from '../../../assets/img/messageUnread.svg';
 import { AudioMessage } from './AudioMessage';
+import { observer } from 'mobx-react-lite';
 interface MessageProps {
-	username: string;
+	fullname: string;
 	text?: string | undefined;
 	date: string;
 	isMe?: boolean;
 	isReaded?: boolean;
-	attachments: object[] | undefined;
+	attachments?: object[] | undefined;
 	audio?: string;
 }
 
@@ -81,69 +82,65 @@ const MessageStyles = styled.div<MessageStylesProps>`
 	}
 `;
 
-export const Message: React.FC<MessageProps> = ({
-	username,
-	text,
-	date,
-	isMe,
-	isReaded,
-	attachments,
-	audio,
-}) => {
-	React.useEffect(() => {});
+export const Message: React.FC<MessageProps> = observer(
+	({ fullname, text, date, isMe, isReaded, attachments, audio }) => {
+		React.useEffect(() => {});
 
-	return (
-		<MessageStyles isMe={isMe || false}>
-			<Avatar
-				src="https://avatars.githubusercontent.com/u/75245399?v=4"
-				width="50px"
-				height="50px"
-			/>
-			{audio ? (
-				<div className="audio-box">
-					<AudioMessage audio={audio} />
-					<div className="message-info">
-						<span>{date}</span>
-						<img
-							src={isReaded ? messageRead : messageUnread}
-							alt="checked message"
-							className="checkedMsgImg"
-						/>
-					</div>
-				</div>
-			) : text ? (
-				<div className="message-box">
-					<a href="#">
-						<h4>{isMe ? 'You' : username}</h4>
-					</a>
-					<div className="message-content">
-						{text && <p>{text}</p>}
-						<div className={attachments && 'attachments'}>
-							{attachments &&
-								attachments.map((el: any, index) => (
-									<div key={`${index}__${el.src}`}>
-										<img
-											onClick={() =>
-												imagePatch.setImagePatch(el.src)
-											}
-											src={el.src}
-										/>
-									</div>
-								))}
+		return (
+			<MessageStyles isMe={isMe || false}>
+				<Avatar
+					src="https://avatars.githubusercontent.com/u/75245399?v=4"
+					width="50px"
+					height="50px"
+				/>
+				{audio ? (
+					<div className="audio-box">
+						<AudioMessage audio={audio} />
+						<div className="message-info">
+							<span>{date}</span>
+							<img
+								src={isReaded ? messageRead : messageUnread}
+								alt="checked message"
+								className="checkedMsgImg"
+							/>
 						</div>
 					</div>
-					<div className="message-info">
-						<span>{date}</span>
-						<img
-							src={isReaded ? messageRead : messageUnread}
-							alt="checked message"
-							className="checkedMsgImg"
-						/>
+				) : text ? (
+					<div className="message-box">
+						<a href="#">
+							<h4>{isMe ? 'You' : fullname}</h4>
+						</a>
+						<div className="message-content">
+							{text && <p>{text}</p>}
+							<div className={attachments && 'attachments'}>
+								{attachments &&
+									attachments.map((el: any, index) => (
+										<div key={`${index}__${el.src}`}>
+											<img
+												onClick={() =>
+													imagePatch.setImagePatch(
+														el.src,
+													)
+												}
+												src={el.src}
+											/>
+										</div>
+									))}
+							</div>
+						</div>
+						<div className="message-info">
+							<span>{date}</span>
+							<img
+								src={isReaded ? messageRead : messageUnread}
+								alt="checked message"
+								className="checkedMsgImg"
+							/>
+						</div>
 					</div>
-				</div>
-			) : (
-				<div className="file-box"></div>
-			)}
-		</MessageStyles>
-	);
-};
+				) : (
+					<div className="file-box"></div>
+				)}
+			</MessageStyles>
+		);
+	},
+);

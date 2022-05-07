@@ -9,6 +9,7 @@ import messagesStore from '../../../stores/messagesStore';
 const DilagosStyles = styled.div`
 	overflow-y: auto;
 	max-height: 90%;
+	background-color: #1c1d2c;
 `;
 
 const NoMatchesFound = styled.div`

@@ -5,6 +5,8 @@ import leaveChatSvg from '../../assets/img/leaveChat.svg';
 import pinSvg from '../../assets/img/pin.svg';
 import blockSvg from '../../assets/img/block.svg';
 import { Search } from '../Search';
+import { observer } from 'mobx-react-lite';
+import dialgosStore from '../../stores/dialgosStore';
 
 const ChatBarHeaderStyles = styled.div`
 	z-index: 3;
@@ -21,8 +23,7 @@ const ChatBarHeaderStyles = styled.div`
 		h3 {
 			display: block;
 			margin: 0 auto;
-			max-width: 300px;
-			text-align: center;
+			width: max-content;
 			font-size: 16px;
 			font-weight: 400;
 		}
@@ -30,22 +31,21 @@ const ChatBarHeaderStyles = styled.div`
 `;
 
 const Status = styled.span`
-	text-align: center;
+	text-align: left;
 	color: #969696;
 	font-weight: 200;
 	position: relative;
 	display: block;
-	width: 70px;
+	width: 100%;
 	margin: 0 auto;
 	p {
-		text-align: left;
+		padding-left: 15px;
 	}
-	p::before {
+	&::before {
 		content: '';
 		width: 10px;
 		height: 10px;
 		position: absolute;
-		right: 5px;
 		top: 50%;
 		transform: translateY(-50%);
 		background-color: #5ca8eb;
@@ -157,67 +157,72 @@ interface ChatBarHeader {
 	searchValue: string;
 }
 
-export const ChatBarHeader: React.FC<ChatBarHeader> = ({
-	setSearchValue,
-	searchValue,
-}) => {
-	const [isOpen, setIsOpen] = React.useState(false);
-	const chatSettingsPopup = React.useRef(null);
-	React.useEffect(() => {
-		document.body.addEventListener('click', handleOutsideClick);
-	}, []);
+export const ChatBarHeader: React.FC<ChatBarHeader> = observer(
+	({ setSearchValue, searchValue }) => {
+		const [isOpen, setIsOpen] = React.useState(false);
+		const chatSettingsPopup = React.useRef(null);
 
-	const handleOutsideClick = (e: any) => {
-		if (!e.path.includes(chatSettingsPopup.current) && !isOpen) {
-			setIsOpen(false);
-		}
-	};
-	return (
-		<ChatBarHeaderStyles>
-			<div>
-				<h3>Петрович</h3>
-				<Status>
-					<p>online</p>
-				</Status>
-			</div>
+		React.useEffect(() => {
+			document.body.addEventListener('click', handleOutsideClick);
+		}, []);
 
-			<ControlPanelBox>
+		const handleOutsideClick = (e: any) => {
+			if (!e.path.includes(chatSettingsPopup.current) && !isOpen) {
+				setIsOpen(false);
+			}
+		};
+
+		const username = dialgosStore.dialogues.find(
+			el => el._id === dialgosStore.currentDialog,
+		)?.message.user.fullname;
+
+		return (
+			<ChatBarHeaderStyles>
 				<div>
-					<Search
-						value={searchValue}
-						setValue={setSearchValue}
-						height="40px"
-						width="300px"
-						focusWidth="500px"
-						bgColor="#1C1D2C"
-						placeholder="Chat Search"
-					/>
+					<h3>{username}</h3>
+					<Status>
+						<p>online</p>
+					</Status>
 				</div>
 
-				<ControlPanel ref={chatSettingsPopup}>
-					<div
-						onClick={() => {
-							setIsOpen(!isOpen);
-						}}>
-						<span />
+				<ControlPanelBox>
+					<div>
+						<Search
+							value={searchValue}
+							setValue={setSearchValue}
+							height="40px"
+							width="300px"
+							focusWidth="500px"
+							bgColor="#1C1D2C"
+							placeholder="Chat Search"
+						/>
 					</div>
 
-					<ChatSettingsPopup isOpen={isOpen}>
-						<li>
-							<img src={volumeMuteSvg} alt="" /> <p>Mute</p>
-						</li>
-						<li>
-							<img src={pinSvg} alt="" /> <p>Pin</p>
-						</li>
-						<li className="block-chat">
-							<img src={blockSvg} alt="" /> <p>Block user</p>
-						</li>
-						<li className="leave-chat">
-							<img src={leaveChatSvg} alt="" /> <p>Leave</p>
-						</li>
-					</ChatSettingsPopup>
-				</ControlPanel>
-			</ControlPanelBox>
-		</ChatBarHeaderStyles>
-	);
-};
+					<ControlPanel ref={chatSettingsPopup}>
+						<div
+							onClick={() => {
+								setIsOpen(!isOpen);
+							}}>
+							<span />
+						</div>
+
+						<ChatSettingsPopup isOpen={isOpen}>
+							<li>
+								<img src={volumeMuteSvg} alt="" /> <p>Mute</p>
+							</li>
+							<li>
+								<img src={pinSvg} alt="" /> <p>Pin</p>
+							</li>
+							<li className="block-chat">
+								<img src={blockSvg} alt="" /> <p>Block user</p>
+							</li>
+							<li className="leave-chat">
+								<img src={leaveChatSvg} alt="" /> <p>Leave</p>
+							</li>
+						</ChatSettingsPopup>
+					</ControlPanel>
+				</ControlPanelBox>
+			</ChatBarHeaderStyles>
+		);
+	},
+);

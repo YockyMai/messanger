@@ -18,6 +18,7 @@ class MessagesStore {
 		messages
 			.getAllById(_id)
 			.then(res => {
+				this.setMessages(res.data);
 				console.log(res);
 			})
 			.catch(err => {

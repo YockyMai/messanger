@@ -28,5 +28,6 @@ export interface messageItem {
 		fullname: string;
 		avatar: string | null;
 	};
+	audio?: string;
 	dialogs: string;
 }
