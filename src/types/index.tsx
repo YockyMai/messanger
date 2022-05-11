@@ -4,7 +4,7 @@ export interface dialogsItem {
 	message: {
 		user: any;
 		text: string;
-		created_at: Date;
+		createdAt: string;
 	};
 
 	// message: {

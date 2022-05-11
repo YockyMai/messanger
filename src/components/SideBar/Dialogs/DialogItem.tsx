@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Avatar } from '../../Avatar';
 import emptyAvatar from '../../../assets/img/emptyAvatar.png';
 import { Time } from '../../Time';
-import { format, isThisYear, isToday } from 'date-fns';
+import { format, isThisYear, isToday, parseISO } from 'date-fns';
 import dialgosStore from '../../../stores/dialgosStore';
 import { observer } from 'mobx-react-lite';
 
@@ -96,7 +96,7 @@ interface DialogProps {
 	message: {
 		user: any;
 		text: string;
-		created_at: Date;
+		createdAt: string;
 	};
 	unreaded: number;
 	setOnSelect: (_id: string) => void;
@@ -104,11 +104,13 @@ interface DialogProps {
 
 export const DialogItem: React.FC<DialogProps> = observer(
 	({ message, unreaded, setOnSelect, _id }) => {
-		// const getMessageTime = (created_at: Date) => {
-		// 	if (isToday(created_at)) return format(created_at, 'HH:mm'); //Если сообщение написано сегодня
-		// 	if (isThisYear(created_at)) return format(created_at, 'd cccc');
-		// 	return format(created_at, 'd.MM.Y');
-		// };
+		const getMessageTime = (created_at: string) => {
+			if (isToday(parseISO(created_at)))
+				return format(parseISO(created_at), 'HH:mm'); //Если сообщение написано сегодня
+			if (isThisYear(parseISO(created_at)))
+				return format(parseISO(created_at), 'd cccc');
+			return format(parseISO(created_at), 'd.MM.Y');
+		}; // TODO: refactor time func
 
 		return (
 			<DialogsStyles
@@ -120,11 +122,9 @@ export const DialogItem: React.FC<DialogProps> = observer(
 				}}>
 				<div className="dialog-avatar">
 					<Avatar
-						src={
-							message.user.avatar
-								? message.user.avatar
-								: emptyAvatar
-						}
+						fullname={message.user.fullname}
+						user_id={message.user._id}
+						src={message.user.avatar && message.user.avatar}
 						width="50px"
 						height="50px"
 					/>
@@ -141,7 +141,7 @@ export const DialogItem: React.FC<DialogProps> = observer(
 						</p>
 					</div>
 					<div className="dialog-other">
-						{/* <Time time={getMessageTime(message.created_at)} /> */}
+						{/* <Time time={getMessageTime(message.createdAt)} /> */}
 						{unreaded > 0 && (
 							<div className="unreaded-messages">
 								{unreaded > 0 && (

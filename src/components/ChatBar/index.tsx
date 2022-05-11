@@ -1,14 +1,13 @@
-import { relative } from 'path';
 import React from 'react';
 import styled from 'styled-components';
-import { AudioMessage } from './messages/AudioMessage';
 import { Message } from './messages/Message';
 import { SendMessage } from './SendMessage';
 import audio from '../../assets/sounds/pamparam.mp3'; //testaudio
 import { ChatBarHeader } from './ChatBarHeader';
 import { observer } from 'mobx-react-lite';
 import messagesStore from '../../stores/messagesStore';
-import dialgosStore from '../../stores/dialgosStore';
+import { Loader } from '../UI/Loader';
+import { EmojiPicker } from '../EmojiPicker';
 
 const ChatBarStyles = styled.div`
 	height: 100%;
@@ -159,14 +158,19 @@ export const ChatBar = observer(() => {
 				searchValue={searchValue}
 				setSearchValue={setSearchValue}
 			/>
+
 			<div className="messages-box">
-				{filteredMessages.length > 0 ? (
+				{!messagesStore.loaded ? (
+					<Loader />
+				) : filteredMessages.length > 0 ? (
 					<>
 						{filteredMessages.map((el, index) => (
 							<Message
 								key={index}
+								index={index}
 								text={el.text}
 								date={el.createdAt}
+								user_id={el.user._id}
 								fullname={el.user.fullname}
 							/>
 						))}

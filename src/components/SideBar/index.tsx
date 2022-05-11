@@ -91,6 +91,7 @@ export const SideBar = observer(() => {
 					<Search setValue={setSearchValue} placeholder="Search" />
 				</div>
 			</UserBlock>
+
 			<Dialogs loaded={loaded} dialogsItems={filteredDialogs} />
 		</SideBarStyles>
 	);

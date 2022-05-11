@@ -6,11 +6,14 @@ import dialgosStore from './dialgosStore';
 
 class MessagesStore {
 	currentMessages: messageItem[] = [];
+	loaded = false;
 	constructor() {
 		makeObservable(this, {
 			currentMessages: observable,
+			loaded: observable,
 			fetchMessages: action.bound,
 			setMessages: action,
+			setLoaded: action,
 		});
 	}
 
@@ -19,7 +22,7 @@ class MessagesStore {
 			.getAllById(_id)
 			.then(res => {
 				this.setMessages(res.data);
-				console.log(res);
+				this.setLoaded();
 			})
 			.catch(err => {
 				console.log(err);
@@ -32,6 +35,10 @@ class MessagesStore {
 
 	sendMessage(message: messageItem) {
 		this.currentMessages.push(message);
+	}
+
+	setLoaded() {
+		this.loaded = true;
 	}
 }
 

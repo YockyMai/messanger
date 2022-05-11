@@ -6,6 +6,7 @@ import messageRead from '../../../assets/img/messageRead.svg';
 import messageUnread from '../../../assets/img/messageUnread.svg';
 import { AudioMessage } from './AudioMessage';
 import { observer } from 'mobx-react-lite';
+import messagesStore from '../../../stores/messagesStore';
 interface MessageProps {
 	fullname: string;
 	text?: string | undefined;
@@ -14,6 +15,8 @@ interface MessageProps {
 	isReaded?: boolean;
 	attachments?: object[] | undefined;
 	audio?: string;
+	index?: number;
+	user_id: string;
 }
 
 interface MessageStylesProps {
@@ -83,12 +86,38 @@ const MessageStyles = styled.div<MessageStylesProps>`
 `;
 
 export const Message: React.FC<MessageProps> = observer(
-	({ fullname, text, date, isMe, isReaded, attachments, audio }) => {
-		React.useEffect(() => {});
+	({
+		fullname,
+		text,
+		date,
+		isMe,
+		isReaded,
+		attachments,
+		audio,
+		index,
+		user_id,
+	}) => {
+		if (messagesStore.currentMessages.length === index) {
+			console.log(true);
+		}
+
+		const scrollTo = React.useRef<HTMLDivElement>(null);
+
+		React.useEffect(() => {
+			scrollTo.current && scrollTo.current.scrollIntoView();
+		}, []);
 
 		return (
-			<MessageStyles isMe={isMe || false}>
+			<MessageStyles
+				ref={
+					messagesStore.currentMessages.length - 1 === index //FIXME: corrected scrolling to last read message
+						? scrollTo
+						: null
+				}
+				isMe={isMe || false}>
 				<Avatar
+					fullname={fullname}
+					user_id={user_id}
 					src="https://avatars.githubusercontent.com/u/75245399?v=4"
 					width="50px"
 					height="50px"

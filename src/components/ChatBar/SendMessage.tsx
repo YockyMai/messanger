@@ -1,9 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import emojiSvg from '../../assets/img/emoji.svg';
-import attachSvg from '../../assets/img/attach.svg';
-import sendSvg from '../../assets/img/Send.svg';
-import microSvg from '../../assets/img/microphone.svg';
+import { EmojiPicker } from '../EmojiPicker';
 
 interface SendMessageProps {}
 
@@ -64,11 +61,31 @@ const SendMessageStyle = styled.div`
 			z-index: 100;
 			bottom: 0px;
 		}
+		.input-fileAttach {
+			position: absolute;
+			cursor: pointer;
+			bottom: 0px;
+			opacity: 0;
+			width: 40px;
+			height: 70px;
+		}
 		.attach {
 			left: 10px !important;
+			&:hover {
+				svg {
+					path {
+						fill: #8e8e96 !important;
+					}
+				}
+			}
 		}
 		.emoji {
 			right: 50px;
+			.picker {
+				position: absolute;
+				right: 0;
+				bottom: 50px;
+			}
 		}
 		.micro {
 			svg {
@@ -109,6 +126,9 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 	const [message, setMessage] = React.useState<string | null>('');
 	const [showSend, setShowSend] = React.useState(false);
 	const inputDiv = React.useRef<HTMLDivElement>(null);
+	const [emojiVisible, setEmojiVisible] = React.useState(false);
+	const [selectedFiles, setSelectedFiles] = React.useState<any>([]);
+	console.log(selectedFiles);
 
 	React.useEffect(() => {
 		inputDiv && inputDiv.current && inputDiv.current.focus();
@@ -138,6 +158,14 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 
 			<div className="input-actions">
 				<span className="attach">
+					<input
+						className="input-fileAttach"
+						type="file"
+						multiple
+						onChange={event => {
+							setSelectedFiles(event.target.files);
+						}}
+					/>
 					<svg
 						width="29"
 						height="32"
@@ -150,8 +178,22 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 						/>
 					</svg>
 				</span>
+
 				<span className="emoji">
+					{emojiVisible && (
+						<div className="picker">
+							<EmojiPicker
+								onEmojiSelect={() => {
+									console.log();
+								}}
+							/>
+						</div>
+					)}
+
 					<svg
+						onClick={() => {
+							setEmojiVisible(!emojiVisible);
+						}}
 						width="32"
 						height="32"
 						viewBox="0 0 32 32"
