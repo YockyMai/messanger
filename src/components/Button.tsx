@@ -43,12 +43,17 @@ const ButtonStyles = styled.button`
 `;
 
 interface ButtonProps {
-	children: string;
+	children: React.ReactNode;
+	onClick?: () => void;
 }
 
-export const Button: React.FC<ButtonProps> = ({ children }) => {
+export const Button: React.FC<ButtonProps> = ({ children, onClick }) => {
 	return (
-		<ButtonStyles>
+		<ButtonStyles
+			onClick={e => {
+				e.preventDefault();
+				onClick && onClick();
+			}}>
 			<p>{children}</p>
 		</ButtonStyles>
 	);

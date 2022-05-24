@@ -2,7 +2,6 @@ import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
 import { Main } from './pages/Main';
-import { Registration } from './pages/Registration';
 import { Login } from './pages/Login';
 
 const AppWraper = styled.div`
@@ -24,9 +23,9 @@ function App() {
 	return (
 		<AppWraper>
 			<Routes>
-				<Route path="/registration" element={<Registration />} />
-				<Route path="/im" element={<Main />} />
+				<Route path="/registration" element={<Login />} />
 				<Route path="/login" element={<Login />} />
+				<Route path="/im" element={<Main />} />
 				<Route path="/" element={<Navigate to="/im" replace />} />
 			</Routes>
 		</AppWraper>

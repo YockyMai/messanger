@@ -10,12 +10,10 @@ class ImagePatch {
 	setImagePatch(src: string) {
 		this.imagePatch = src;
 		this.flag = true;
-		console.log(this.imagePatch);
 	}
 	removeImagePatch() {
 		this.imagePatch = '';
 		this.flag = false;
-		console.log(this.imagePatch);
 	}
 }
 
