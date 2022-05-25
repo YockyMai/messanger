@@ -9,7 +9,7 @@ import { observer } from 'mobx-react-lite';
 import dialgosStore from '../../stores/dialgosStore';
 
 const ChatBarHeaderStyles = styled.div`
-	z-index: 3;
+	z-index: 1;
 	height: 70px;
 	width: 75%;
 	position: fixed;
@@ -114,7 +114,7 @@ const ChatSettingsPopup = styled.div<ChatSettingsPopupProps>`
 			? `display: block; opacity: 1 !important; transition: 1s all;`
 			: 'display: none; opacity: 0;'}
 	position: absolute;
-	z-index: 100;
+	z-index: 1;
 	transition: 1s all;
 	right: 10px;
 	top: 40px;

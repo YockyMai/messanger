@@ -58,7 +58,7 @@ const SendMessageStyle = styled.div`
 			cursor: pointer;
 			position: absolute;
 			bottom: 10px;
-			z-index: 100;
+			z-index: 2;
 			bottom: 0px;
 		}
 		.input-fileAttach {

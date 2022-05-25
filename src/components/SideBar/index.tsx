@@ -5,6 +5,7 @@ import { Search } from '../Search';
 import { dialogsItem } from '../../types';
 import { observer } from 'mobx-react-lite';
 import dialogsStore from '../../stores/dialgosStore';
+import { SideMenu } from './SideMenu';
 
 const SideBarStyles = styled.div`
 	background-color: #1c1d2c;
@@ -44,9 +45,7 @@ const UserBlock = styled.div`
 `;
 
 export const SideBar = observer(() => {
-	const [dialogsItems, setDialogsItems] = React.useState<Array<dialogsItem>>(
-		[],
-	);
+	const [sideIsOpen, setSideIsOpen] = React.useState(true);
 	const [searchValue, setSearchValue] = React.useState('');
 	const [loaded, setLoaded] = React.useState(false);
 	React.useEffect(() => {
@@ -66,7 +65,7 @@ export const SideBar = observer(() => {
 		<SideBarStyles>
 			<UserBlock>
 				<div className="header">
-					<div className="menu">
+					<div className="menu" onClick={() => setSideIsOpen(true)}>
 						<svg
 							className="burgerBtn"
 							width="25"
@@ -91,8 +90,8 @@ export const SideBar = observer(() => {
 					<Search setValue={setSearchValue} placeholder="Search" />
 				</div>
 			</UserBlock>
-
 			<Dialogs loaded={loaded} dialogsItems={filteredDialogs} />
+			<SideMenu sideIsOpen={sideIsOpen} setSideIsOpen={setSideIsOpen} />
 		</SideBarStyles>
 	);
 });

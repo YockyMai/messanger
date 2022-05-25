@@ -172,7 +172,7 @@ export const Login = () => {
 		if (validName !== null) {
 			if (username.length <= 8) {
 				setValidateUsernameMsg(
-					'Username must be more than \n6 characters',
+					'Username must be more than 6 characters',
 				);
 				setValidName(false);
 			} else {
@@ -185,7 +185,7 @@ export const Login = () => {
 	React.useEffect(() => {
 		if (validPass !== null) {
 			if (password.length <= 8) {
-				setValidatePassMsg('Username must be more than \n6 characters');
+				setValidatePassMsg('Password must be more than \n6 characters');
 				setValidPass(false);
 			} else if (password[0].toUpperCase() !== password[0]) {
 				setValidatePassMsg('Password must start with a capital letter');
@@ -227,7 +227,7 @@ export const Login = () => {
 							? 'Log In'
 							: 'Registration'}
 					</h1>
-					<div className="">
+					<div>
 						<Input
 							placeholder="Username"
 							type="text"
@@ -245,7 +245,7 @@ export const Login = () => {
 						</ValidateMsg>
 					</div>
 
-					<div className="">
+					<div>
 						<div className="passBlock">
 							<Input
 								placeholder="Password"
