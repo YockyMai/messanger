@@ -15,6 +15,8 @@ interface SearchProps {
 	height?: string;
 	width?: string;
 	focusWidth?: string;
+	onKeyDown?: (e: KeyboardEvent) => void;
+	inputRef?: React.RefObject<HTMLInputElement>;
 }
 
 const SearchInput = styled.input<SearchStylesProps>`
@@ -46,15 +48,21 @@ export const Search: React.FC<SearchProps> = ({
 	width,
 	height,
 	focusWidth,
+	onKeyDown,
+	inputRef,
 }) => {
 	return (
 		<SearchInput
+			ref={inputRef}
 			bgColor={bgColor}
 			width={width}
 			height={height}
 			focusWidth={focusWidth}
 			type="text"
 			value={value}
+			onKeyDown={(e: any) => {
+				onKeyDown && onKeyDown(e);
+			}}
 			onChange={e => {
 				if (setValue) {
 					setValue(e.target.value);

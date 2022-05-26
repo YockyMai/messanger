@@ -11,6 +11,7 @@ const ChatBarStyles = styled.div`
 	height: 100%;
 	width: 100%;
 	overflow-y: auto;
+	position: relative;
 	.messages-box {
 		padding-left: 40px;
 		padding-top: 80px;

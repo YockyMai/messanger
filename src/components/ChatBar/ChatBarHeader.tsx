@@ -7,6 +7,8 @@ import blockSvg from '../../assets/img/block.svg';
 import { Search } from '../Search';
 import { observer } from 'mobx-react-lite';
 import dialgosStore from '../../stores/dialgosStore';
+import searchImg from '../../assets/img/search.svg';
+import closeImg from '../../assets/img/x-non-v1.svg';
 
 const ChatBarHeaderStyles = styled.div`
 	z-index: 1;
@@ -59,6 +61,9 @@ const ControlPanelBox = styled.div`
 	height: 100%;
 	width: 100%;
 	justify-content: flex-end;
+	.SearchContainer {
+		position: relative;
+	}
 `;
 
 const ControlPanel = styled.div`
@@ -148,6 +153,30 @@ const ChatSettingsPopup = styled.div<ChatSettingsPopupProps>`
 	}
 `;
 
+const OpenSearch = styled.img<{ searchIsOpen: boolean }>`
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	top: 50%;
+	right: 3px;
+	cursor: pointer;
+	transform: translateY(-50%)
+		${props => (props.searchIsOpen ? 'scale(0)' : 'scale(1)')};
+	transition: 0.2s;
+`;
+
+const CloseSearch = styled.img<{ searchIsOpen: boolean }>`
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	top: 50%;
+	right: 3px;
+	cursor: pointer;
+	transform: translateY(-50%)
+		${props => (!props.searchIsOpen ? 'scale(0)' : 'scale(1)')};
+	transition: 0.2s;
+`;
+
 interface ChatSettingsPopupProps {
 	isOpen: boolean;
 }
@@ -160,7 +189,9 @@ interface ChatBarHeader {
 export const ChatBarHeader: React.FC<ChatBarHeader> = observer(
 	({ setSearchValue, searchValue }) => {
 		const [isOpen, setIsOpen] = React.useState(false);
+		const [searchIsOpen, setSearchIsOpen] = React.useState(false);
 		const chatSettingsPopup = React.useRef(null);
+		const searchInputRef = React.useRef<HTMLInputElement>(null);
 
 		React.useEffect(() => {
 			document.body.addEventListener('click', handleOutsideClick);
@@ -169,6 +200,17 @@ export const ChatBarHeader: React.FC<ChatBarHeader> = observer(
 		const handleOutsideClick = (e: any) => {
 			if (!e.path.includes(chatSettingsPopup.current) && !isOpen) {
 				setIsOpen(false);
+			}
+		};
+
+		const searchMessage = (e: KeyboardEvent) => {
+			if (e.keyCode === 13) {
+				console.log(e.key); //Search function
+			}
+			if (e.keyCode === 27) {
+				setSearchIsOpen(false);
+				searchInputRef.current?.blur();
+				setSearchValue('');
 			}
 		};
 
@@ -186,15 +228,36 @@ export const ChatBarHeader: React.FC<ChatBarHeader> = observer(
 				</div>
 
 				<ControlPanelBox>
-					<div>
+					<div className="SearchContainer">
 						<Search
 							value={searchValue}
 							setValue={setSearchValue}
 							height="40px"
-							width="300px"
+							width={searchIsOpen ? '500px' : '40px'}
 							focusWidth="500px"
 							bgColor="#1C1D2C"
-							placeholder="Chat Search"
+							placeholder={searchIsOpen ? 'Chat Search' : ''}
+							onKeyDown={searchMessage}
+							inputRef={searchInputRef}
+						/>
+						<OpenSearch
+							onClick={() => {
+								setSearchIsOpen(true);
+								searchInputRef.current?.focus();
+							}}
+							src={searchImg}
+							alt="search"
+							searchIsOpen={searchIsOpen}
+						/>
+						<CloseSearch
+							onClick={() => {
+								setSearchIsOpen(false);
+								searchInputRef.current?.blur();
+								setSearchValue('');
+							}}
+							src={closeImg}
+							alt="close"
+							searchIsOpen={searchIsOpen}
 						/>
 					</div>
 

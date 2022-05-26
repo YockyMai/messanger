@@ -1,4 +1,5 @@
 import { action, flow, makeObservable, observable } from 'mobx';
+import React from 'react';
 import { dialogsItem } from '../types';
 import { dialogs } from '../utils/api';
 import messagesStore from './messagesStore';

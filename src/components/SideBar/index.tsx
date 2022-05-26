@@ -20,15 +20,49 @@ const UserBlock = styled.div`
 	padding: 10px 0 10px 10px;
 	.header {
 		.menu {
-			cursor: pointer;
-			margin-right: 10px;
-			&:hover {
-				path {
-					fill: #a8a8a8;
+			div {
+				height: 50px;
+				&:hover {
+					span,
+					span::after,
+					span::before {
+						transition: 0.2s;
+						background-color: #a8a8a8;
+					}
 				}
+				span {
+					transition: 0.2s;
+					top: 50%;
+					height: 2px;
+					width: 30px;
+					display: block;
+					background-color: #787878;
+					position: relative;
+					z-index: -1;
+					&::before {
+						transition: 0.2s;
+						content: '';
+						position: absolute;
+						background-color: #787878;
+						height: 2px;
+						width: 30px;
+						top: -10px;
+					}
+					&::after {
+						transition: 0.2s;
+						content: '';
+						position: absolute;
+						background-color: #787878;
+						height: 2px;
+						width: 30px;
+						top: 10px;
+					}
+				}
+				cursor: pointer;
 			}
+			margin-right: 10px;
 		}
-		width: 99%;
+		width: 100%;
 		margin: 0 auto;
 		display: flex;
 		align-items: center;
@@ -45,8 +79,9 @@ const UserBlock = styled.div`
 `;
 
 export const SideBar = observer(() => {
-	const [sideIsOpen, setSideIsOpen] = React.useState(true);
+	const [sideIsOpen, setSideIsOpen] = React.useState(false);
 	const [searchValue, setSearchValue] = React.useState('');
+	const menuBtn = React.useRef(null);
 	const [loaded, setLoaded] = React.useState(false);
 	React.useEffect(() => {
 		(() => {
@@ -66,32 +101,19 @@ export const SideBar = observer(() => {
 			<UserBlock>
 				<div className="header">
 					<div className="menu" onClick={() => setSideIsOpen(true)}>
-						<svg
-							className="burgerBtn"
-							width="25"
-							height="21"
-							viewBox="0 0 25 21"
-							fill="none"
-							xmlns="http://www.w3.org/2000/svg">
-							<path
-								d="M0.780612 2.62256H24.2194C24.6505 2.62256 25 2.20727 25 1.69499C25 1.18271 24.6505 0.767426 24.2194 0.767426H0.780612C0.34949 0.767426 0 1.18271 0 1.69499C0 2.20727 0.34949 2.62256 0.780612 2.62256Z"
-								fill="#787878"
-							/>
-							<path
-								d="M0.780612 20.7674H24.2194C24.6505 20.7674 25 20.3521 25 19.8398C25 19.3275 24.6505 18.9123 24.2194 18.9123H0.780612C0.34949 18.9123 0 19.3275 0 19.8398C0 20.3521 0.34949 20.7674 0.780612 20.7674Z"
-								fill="#787878"
-							/>
-							<path
-								d="M0.780612 11.695H24.2194C24.6505 11.695 25 11.2797 25 10.7674C25 10.2552 24.6505 9.83987 24.2194 9.83987H0.780612C0.34949 9.83987 0 10.2552 0 10.7674C0 11.2797 0.34949 11.695 0.780612 11.695Z"
-								fill="#787878"
-							/>
-						</svg>
+						<div ref={menuBtn}>
+							<span />
+						</div>
 					</div>
 					<Search setValue={setSearchValue} placeholder="Search" />
 				</div>
 			</UserBlock>
 			<Dialogs loaded={loaded} dialogsItems={filteredDialogs} />
-			<SideMenu sideIsOpen={sideIsOpen} setSideIsOpen={setSideIsOpen} />
+			<SideMenu
+				menuBtnRef={menuBtn}
+				sideIsOpen={sideIsOpen}
+				setSideIsOpen={setSideIsOpen}
+			/>
 		</SideBarStyles>
 	);
 });
