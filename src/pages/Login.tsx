@@ -260,7 +260,11 @@ export const Login = observer(() => {
 								)}
 							</Button>
 						) : (
-							<Button isLoading={isLoading} onClick={register}>
+							<Button
+								height="45px"
+								width="120px"
+								isLoading={isLoading}
+								onClick={register}>
 								{isLoading ? (
 									<Loader width="35px" top="-14px" />
 								) : (

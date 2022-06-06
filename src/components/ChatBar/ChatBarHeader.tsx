@@ -216,7 +216,6 @@ export const ChatBarHeader: React.FC<ChatBarHeader> = observer(
 		const [searchIsOpen, setSearchIsOpen] = React.useState(false);
 		const chatSettingsPopup = React.useRef(null);
 		const searchInputRef = React.useRef<HTMLInputElement>(null);
-		const transitionName = '';
 
 		React.useEffect(() => {
 			document.body.addEventListener('click', handleOutsideClick);
