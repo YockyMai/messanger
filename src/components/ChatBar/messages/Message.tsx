@@ -97,10 +97,6 @@ export const Message: React.FC<MessageProps> = observer(
 		index,
 		user_id,
 	}) => {
-		if (messagesStore.currentMessages.length === index) {
-			console.log(true);
-		}
-
 		const scrollTo = React.useRef<HTMLDivElement>(null);
 
 		React.useEffect(() => {

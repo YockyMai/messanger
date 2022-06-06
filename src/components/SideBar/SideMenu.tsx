@@ -2,6 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 import { Avatar } from '../Avatar';
 import friendsImg from '../../assets/img/friends.svg';
+import infoImg from '../../assets/img/info.svg';
+import settingsFilter from '../../assets/img/settingParams.svg';
+import { Input } from '../Input';
+import { Friend } from '../Friend';
+import { SideItem } from './SideItem';
+import authStore from '../../stores/authStore';
+import { User } from '../../types';
+import user from '../../utils/api/user';
+import { Loader } from '../UI/Loader';
 
 const SideMenuStyle = styled.div<{ sideIsOpen: boolean }>`
 	height: 100vh;
@@ -9,7 +18,7 @@ const SideMenuStyle = styled.div<{ sideIsOpen: boolean }>`
 	position: absolute;
 	left: 0;
 	top: 0;
-	width: 80%;
+	width: 100%;
 	box-shadow: 5px 0px 20px 0px rgba(0, 0, 0, 0.3);
 	z-index: 100;
 	transition: 0.2s all ease-in-out;
@@ -35,10 +44,16 @@ const UserBlock = styled.div`
 	display: flex;
 	align-items: center;
 	position: relative;
+	justify-content: space-between;
 	padding: 10px 0 0 10px;
-	p {
-		margin-left: 10px;
+	div {
+		display: flex;
+		align-items: center;
+		p {
+			margin-left: 10px;
+		}
 	}
+
 	&::after {
 		content: '';
 		position: absolute;
@@ -50,51 +65,67 @@ const UserBlock = styled.div`
 	}
 `;
 
+const Close = styled.span`
+	position: relative;
+	right: 13px;
+	width: 22px;
+	height: 22px;
+	cursor: pointer;
+	transform: rotate(45deg) scale(1.1);
+	&:hover {
+		&::after {
+			background-color: #ff8f8f;
+			transition: 0.15s;
+		}
+		&::before {
+			background-color: #ff8f8f;
+			transition: 0.15s;
+		}
+	}
+	&::after {
+		transition: 0.15s;
+		position: absolute;
+		content: '';
+		background-color: #fff;
+		width: 1px;
+		height: 21px;
+		left: 50%;
+	}
+	&::before {
+		transition: 0.15s;
+		position: absolute;
+		content: '';
+		background-color: #fff;
+		width: 21px;
+		height: 1px;
+		top: 10px;
+		left: 1px;
+	}
+`;
+
 const SideItemContent = styled.div`
 	margin-top: 25px;
 `;
 
-const SideItem = styled.div<{ itemOpen: boolean }>`
-	p {
-		margin-left: 10px;
-	}
-	img {
-		width: 25px;
-	}
-	.sideItem {
-		&:hover {
-			background-color: #171823;
-			cursor: pointer;
-		}
-		min-height: 50px;
-		width: 100%;
-		padding: 0 10px 0 10px;
-		display: flex;
-		align-items: center;
-	}
-	.sideItemBody {
-		transition: 1s;
-		height: 0;
-		overflow: hidden;
-		height: ${props => props.itemOpen && '300px;'};
-	}
-`;
-
-const Header = styled.div``;
-
-interface ISideMenu {
+interface SideMenuProps {
 	sideIsOpen: boolean;
 	setSideIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	menuBtnRef: React.RefObject<HTMLDivElement>;
 }
 
-export const SideMenu: React.FC<ISideMenu> = ({
+export const SideMenu: React.FC<SideMenuProps> = ({
 	sideIsOpen,
 	setSideIsOpen,
 	menuBtnRef,
 }) => {
 	const sideMenu = React.useRef(null);
-	const [sideItemIsOpen, setSideItemOpen] = React.useState(false);
+	const [searchValue, setSearchValue] = React.useState('');
+
+	const [searchResult, setSearchResult] = React.useState<User[]>([]);
+	const [searchLimit, setSearchLimit] = React.useState(5);
+	const [filterIsOpen, setFilterIsOpen] = React.useState(false);
+	const [isLoading, setIsLoading] = React.useState(false);
+	const [isWomen, setIsWomen] = React.useState('');
 
 	React.useEffect(() => {
 		document.body.addEventListener('click', handleOutsideClick);
@@ -103,6 +134,27 @@ export const SideMenu: React.FC<ISideMenu> = ({
 			document.body.removeEventListener('click', handleOutsideClick);
 		};
 	}, [sideIsOpen]);
+
+	React.useEffect(() => {
+		if (searchValue.length > 0) {
+			setIsLoading(true);
+			setTimeout(async () => {
+				user.getFilteredUsers(searchValue, searchLimit)
+					.then(result => {
+						setSearchResult(result.data);
+						setIsLoading(false);
+					})
+					.catch(() => {
+						setIsLoading(false);
+						setSearchResult([]);
+					});
+			}, 1000);
+		} else {
+			setSearchResult([]);
+			setIsLoading(false);
+			setSearchLimit(5);
+		}
+	}, [searchValue, searchLimit]);
 
 	const handleOutsideClick = (e: any) => {
 		if (
@@ -115,42 +167,89 @@ export const SideMenu: React.FC<ISideMenu> = ({
 	};
 
 	return (
-		<>
-			<SideMenuStyle sideIsOpen={sideIsOpen} ref={sideMenu}>
-				<SideMenuContent>
-					<UserBlock>
+		<SideMenuStyle sideIsOpen={sideIsOpen} ref={sideMenu}>
+			<SideMenuContent>
+				<UserBlock>
+					<div>
 						<Avatar
 							width="50px"
 							height="50px"
-							fullname="TestUser"
-							user_id="1356164"
+							fullname={authStore.user.fullname}
+							user_id={authStore.user._id}
 						/>
-						<p>TestUser</p>
-					</UserBlock>
-					<SideItemContent>
-						<SideItem itemOpen={sideItemIsOpen}>
-							<div
-								className="sideItem"
-								onClick={() =>
-									setSideItemOpen(!sideItemIsOpen)
-								}>
-								<img src={friendsImg} alt="Add friends" />
-								<p>Add friends</p>
+						<p>{authStore.user.fullname}</p>
+					</div>
+
+					<Close onClick={() => setSideIsOpen(false)} />
+				</UserBlock>
+				<SideItemContent>
+					<SideItem icon={friendsImg} title="Find friends">
+						<div className="friends-search-input">
+							<Input
+								type="text"
+								value={searchValue}
+								setValue={setSearchValue}
+								width="100%"
+								height="40px"
+								backgroundColor="#000"
+								placeholder="Press enter to search for friends"
+								fontSize="15px"
+								list="friends"
+							/>
+							<datalist id="friends">
+								{searchResult.map((user: User) => {
+									<option value={user.fullname} />;
+								})}
+							</datalist>
+							<img
+								src={settingsFilter}
+								alt="Filter"
+								onClick={() => setFilterIsOpen(!filterIsOpen)}
+							/>
+						</div>
+						{filterIsOpen && (
+							<div className="filter">
+								<p>City :</p>
 							</div>
-							<div className="sideItemBody">
-								<p>
-									Lorem ipsum, dolor sit amet consectetur
-									adipisicing elit. Dicta mollitia cupiditate
-									doloribus accusantium quia praesentium vel
-									commodi dolore asperiores dolor nesciunt
-									voluptatum fugiat facere, minima quos at,
-									sed rerum eligendi.
-								</p>
+						)}
+
+						{searchResult.length > 0 ? (
+							<>
+								{searchResult.map((user: User) => (
+									<Friend key={user._id} user={user} />
+								))}
+							</>
+						) : (
+							<>{!isLoading && <h5>No user found</h5>}</>
+						)}
+						{isLoading && (
+							<div className="friends-search__loader">
+								<Loader width="30px" />
 							</div>
-						</SideItem>
-					</SideItemContent>
-				</SideMenuContent>
-			</SideMenuStyle>
-		</>
+						)}
+						{searchResult.length === searchLimit && (
+							<p
+								className="friends-search__viewmore"
+								onClick={() => setSearchLimit(searchLimit + 5)}>
+								View more...
+							</p>
+						)}
+					</SideItem>
+					<SideItem icon={infoImg} title="App info">
+						<p>
+							hiYocky : online web-chat.
+							<br />
+							dev version : 0.0.1
+							<br />
+							<a
+								href="https://github.com/YockyMai/messanger"
+								target="_blank">
+								Git - https://github.com/YockyMai/messanger/
+							</a>
+						</p>
+					</SideItem>
+				</SideItemContent>
+			</SideMenuContent>
+		</SideMenuStyle>
 	);
 };

@@ -3,6 +3,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
 import { Main } from './pages/Main';
 import { Login } from './pages/Login';
+import { AppRouter } from './components/AppRouter';
+import authStore from './stores/authStore';
 
 const AppWraper = styled.div`
 	color: #fff;
@@ -22,12 +24,7 @@ const AppWraper = styled.div`
 function App() {
 	return (
 		<AppWraper>
-			<Routes>
-				<Route path="/registration" element={<Login />} />
-				<Route path="/login" element={<Login />} />
-				<Route path="/im" element={<Main />} />
-				<Route path="/" element={<Navigate to="/im" replace />} />
-			</Routes>
+			<AppRouter />
 		</AppWraper>
 	);
 }

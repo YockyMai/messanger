@@ -12,12 +12,10 @@ const MainPage = styled.div`
 
 export const Main = () => {
 	return (
-		<>
-			<MainPage>
-				<SideBar />
-				<ChatBar />
-				<ViewImage />
-			</MainPage>
-		</>
+		<MainPage>
+			<SideBar />
+			<ChatBar />
+			<ViewImage />
+		</MainPage>
 	);
 };

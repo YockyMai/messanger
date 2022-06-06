@@ -31,3 +31,15 @@ export interface messageItem {
 	audio?: string;
 	dialogs: string;
 }
+
+export interface User {
+	_id: string;
+	email: string;
+	fullname: string;
+	password: string;
+	confirmed: boolean;
+	last_seen: string;
+	createdAt: string;
+	updatedAt: string;
+	avatar?: string;
+}

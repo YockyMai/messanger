@@ -1,13 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const LoaderStyle = styled.div`
-	position: absolute;
+const LoaderStyle = styled.div<{ width?: string; top?: string }>`
+	width: ${props => (props.width ? props.width : '64px')};
+	top: ${props => (props.top ? props.top : '0px')};
+	position: relative;
 	left: 50%;
 	transform: translateX(-50%);
-	top: 30%;
 	z-index: 1;
 	.lds-ring {
+		left: 95%;
+		transform: translateX(-50%);
 		display: inline-block;
 		position: relative;
 		width: 80px;
@@ -17,8 +20,8 @@ const LoaderStyle = styled.div`
 		box-sizing: border-box;
 		display: block;
 		position: absolute;
-		width: 64px;
-		height: 64px;
+		width: ${props => (props.width ? props.width : '64px')};
+		height: ${props => (props.width ? props.width : '64px')};
 		margin: 8px;
 		border: 8px solid #5b5e8d;
 		border-radius: 50%;
@@ -44,9 +47,14 @@ const LoaderStyle = styled.div`
 	}
 `;
 
-export const Loader = () => {
+interface LoaderProps {
+	width?: string;
+	top?: string;
+}
+
+export const Loader: React.FC<LoaderProps> = ({ width, top }) => {
 	return (
-		<LoaderStyle>
+		<LoaderStyle width={width} top={top}>
 			<div className="lds-ring">
 				<div></div>
 				<div></div>

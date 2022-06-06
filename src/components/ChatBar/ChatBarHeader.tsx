@@ -9,6 +9,8 @@ import { observer } from 'mobx-react-lite';
 import dialgosStore from '../../stores/dialgosStore';
 import searchImg from '../../assets/img/search.svg';
 import closeImg from '../../assets/img/x-non-v1.svg';
+import { popupMounted, popupUnmunted } from '../../animation';
+import { CSSTransition } from 'react-transition-group';
 
 const ChatBarHeaderStyles = styled.div`
 	z-index: 1;
@@ -66,10 +68,11 @@ const ControlPanelBox = styled.div`
 	}
 `;
 
-const ControlPanel = styled.div`
+const ControlPanel = styled.div<{ mounted?: boolean }>`
 	width: 70px;
 	height: 100%;
 	cursor: pointer;
+
 	&:hover {
 		transition: 0.1s;
 		span {
@@ -113,14 +116,35 @@ const ControlPanel = styled.div`
 	}
 `;
 
-const ChatSettingsPopup = styled.div<ChatSettingsPopupProps>`
-	${props =>
+const ChatSettingsPopup = styled.div<{ isOpen: boolean }>`
+	// enter to
+
+	&.open-enter {
+		opacity: 0;
+		transform: scale(-1, 0);
+	}
+	&.open-enter-active {
+		opacity: 1;
+		transition: 200ms;
+		transform: scale(1, 1);
+	}
+	&.open-exit {
+		opacity: 1;
+		transform: scale(1, 1);
+	}
+	&.open-exit-active {
+		opacity: 0;
+		transition: 200ms;
+		transform: scale(-1, 0);
+	}
+
+	/* ${props =>
 		props.isOpen
 			? `display: block; opacity: 1 !important; transition: 1s all;`
-			: 'display: none; opacity: 0;'}
+			: 'display: none; opacity: 0;'} */
 	position: absolute;
 	z-index: 1;
-	transition: 1s all;
+	/* transition: 1s all; */
 	right: 10px;
 	top: 40px;
 	width: 200px;
@@ -158,10 +182,12 @@ const OpenSearch = styled.img<{ searchIsOpen: boolean }>`
 	width: 30px;
 	height: 30px;
 	top: 50%;
-	right: 3px;
+	right: 4px;
 	cursor: pointer;
 	transform: translateY(-50%)
 		${props => (props.searchIsOpen ? 'scale(0)' : 'scale(1)')};
+
+	opacity: ${props => (props.searchIsOpen ? '0' : '1')};
 	transition: 0.2s;
 `;
 
@@ -174,12 +200,10 @@ const CloseSearch = styled.img<{ searchIsOpen: boolean }>`
 	cursor: pointer;
 	transform: translateY(-50%)
 		${props => (!props.searchIsOpen ? 'scale(0)' : 'scale(1)')};
+
+	opacity: ${props => (!props.searchIsOpen ? '0' : '1')};
 	transition: 0.2s;
 `;
-
-interface ChatSettingsPopupProps {
-	isOpen: boolean;
-}
 
 interface ChatBarHeader {
 	setSearchValue: React.Dispatch<React.SetStateAction<string>>;
@@ -192,6 +216,7 @@ export const ChatBarHeader: React.FC<ChatBarHeader> = observer(
 		const [searchIsOpen, setSearchIsOpen] = React.useState(false);
 		const chatSettingsPopup = React.useRef(null);
 		const searchInputRef = React.useRef<HTMLInputElement>(null);
+		const transitionName = '';
 
 		React.useEffect(() => {
 			document.body.addEventListener('click', handleOutsideClick);
@@ -236,7 +261,9 @@ export const ChatBarHeader: React.FC<ChatBarHeader> = observer(
 							width={searchIsOpen ? '500px' : '40px'}
 							focusWidth="500px"
 							bgColor="#1C1D2C"
-							placeholder={searchIsOpen ? 'Chat Search' : ''}
+							placeholder={
+								searchIsOpen ? 'Press enter to chat search' : ''
+							}
 							onKeyDown={searchMessage}
 							inputRef={searchInputRef}
 						/>
@@ -261,28 +288,37 @@ export const ChatBarHeader: React.FC<ChatBarHeader> = observer(
 						/>
 					</div>
 
-					<ControlPanel ref={chatSettingsPopup}>
+					<ControlPanel mounted={isOpen} ref={chatSettingsPopup}>
 						<div
 							onClick={() => {
 								setIsOpen(!isOpen);
 							}}>
 							<span />
 						</div>
-
-						<ChatSettingsPopup isOpen={isOpen}>
-							<li>
-								<img src={volumeMuteSvg} alt="" /> <p>Mute</p>
-							</li>
-							<li>
-								<img src={pinSvg} alt="" /> <p>Pin</p>
-							</li>
-							<li className="block-chat">
-								<img src={blockSvg} alt="" /> <p>Block user</p>
-							</li>
-							<li className="leave-chat">
-								<img src={leaveChatSvg} alt="" /> <p>Leave</p>
-							</li>
-						</ChatSettingsPopup>
+						<CSSTransition
+							in={isOpen}
+							timeout={200}
+							mountOnEnter
+							unmountOnExit
+							classNames="open">
+							<ChatSettingsPopup isOpen={isOpen}>
+								<li>
+									<img src={volumeMuteSvg} alt="" />{' '}
+									<p>Mute</p>
+								</li>
+								<li>
+									<img src={pinSvg} alt="" /> <p>Pin</p>
+								</li>
+								<li className="block-chat">
+									<img src={blockSvg} alt="" />{' '}
+									<p>Block user</p>
+								</li>
+								<li className="leave-chat">
+									<img src={leaveChatSvg} alt="" />{' '}
+									<p>Leave</p>
+								</li>
+							</ChatSettingsPopup>
+						</CSSTransition>
 					</ControlPanel>
 				</ControlPanelBox>
 			</ChatBarHeaderStyles>

@@ -40,7 +40,11 @@ const SendMessageStyle = styled.div`
 			display: none;
 		}
 	}
-
+	.picker {
+		position: absolute;
+		right: 50px;
+		bottom: 50px;
+	}
 	.input-actions {
 		span {
 			transform: scale(0.8);
@@ -81,11 +85,6 @@ const SendMessageStyle = styled.div`
 		}
 		.emoji {
 			right: 50px;
-			.picker {
-				position: absolute;
-				right: 0;
-				bottom: 50px;
-			}
 		}
 		.micro {
 			svg {
@@ -123,11 +122,13 @@ const SendMessageStyle = styled.div`
 `;
 
 export const SendMessage: React.FC<SendMessageProps> = () => {
-	const [message, setMessage] = React.useState<string | null>('');
+	const [message, setMessage] = React.useState<string>('');
 	const [showSend, setShowSend] = React.useState(false);
 	const inputDiv = React.useRef<HTMLDivElement>(null);
 	const [emojiVisible, setEmojiVisible] = React.useState(false);
 	const [selectedFiles, setSelectedFiles] = React.useState<any>([]);
+
+	const [selectedEmoji, selectEmoji] = React.useState<any>([]);
 	console.log(selectedFiles);
 
 	React.useEffect(() => {
@@ -136,11 +137,18 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 
 	const handleSetMessage = (e: any) => {
 		setMessage(e.currentTarget.textContent);
-		if (inputDiv.current && inputDiv.current.clientHeight >= 500) {
-		}
+
 		e.currentTarget.textContent != ''
 			? setShowSend(true)
 			: setShowSend(false);
+	};
+
+	const sendMessage = (e: KeyboardEvent) => {
+		if (e.shiftKey && e.keyCode === 13) {
+			console.log('перенос');
+		} else if (message?.length > 0 && e.keyCode === 13) {
+			console.log('submit');
+		}
 	};
 	return (
 		<SendMessageStyle>
@@ -151,11 +159,18 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 				contentEditable
 				role="textbox"
 				aria-multiline
-				onInput={e => {
+				onChange={e => {
 					handleSetMessage(e as any);
 				}}
-			/>
+				onKeyDown={(e: any) => {
+					sendMessage(e);
+				}}></div>
 
+			{emojiVisible && (
+				<div className="picker">
+					<EmojiPicker inputDiv={inputDiv} />
+				</div>
+			)}
 			<div className="input-actions">
 				<span className="attach">
 					<input
@@ -178,18 +193,7 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 						/>
 					</svg>
 				</span>
-
 				<span className="emoji">
-					{emojiVisible && (
-						<div className="picker">
-							<EmojiPicker
-								onEmojiSelect={() => {
-									console.log();
-								}}
-							/>
-						</div>
-					)}
-
 					<svg
 						onClick={() => {
 							setEmojiVisible(!emojiVisible);

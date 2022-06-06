@@ -1,7 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const ButtonStyles = styled.button`
+const ButtonStyles = styled.button<{
+	height?: string;
+	width?: string;
+	isLoading?: boolean;
+}>`
+	position: relative;
 	text-decoration: none;
 	display: inline-block;
 	padding: 10px 30px;
@@ -12,8 +17,10 @@ const ButtonStyles = styled.button`
 	border-radius: 8px;
 	font-family: 'Montserrat', sans-serif;
 	color: #383b68;
-	background-color: #ffffff;
+	background-color: ${props => (props.isLoading ? '#383b68' : '#ffffff')};
 	transition: 0.2s ease-in-out;
+	height: ${props => props.height && props.height};
+	width: ${props => props.width && props.width};
 	cursor: pointer;
 	&::before {
 		content: '';
@@ -34,7 +41,7 @@ const ButtonStyles = styled.button`
 		color: #fff;
 	}
 	&:hover:before {
-		left: 150px;
+		left: ${props => !props.isLoading && '150px'};
 		transition: 0.5s ease-in-out;
 	}
 	p {
@@ -45,11 +52,23 @@ const ButtonStyles = styled.button`
 interface ButtonProps {
 	children: React.ReactNode;
 	onClick?: () => void;
+	height?: string;
+	width?: string;
+	isLoading?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({ children, onClick }) => {
+export const Button: React.FC<ButtonProps> = ({
+	children,
+	onClick,
+	height,
+	width,
+	isLoading,
+}) => {
 	return (
 		<ButtonStyles
+			width={width}
+			height={height}
+			isLoading={isLoading}
 			onClick={e => {
 				e.preventDefault();
 				onClick && onClick();
