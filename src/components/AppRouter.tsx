@@ -1,13 +1,9 @@
 import { observer } from 'mobx-react-lite';
-import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { privateRoutes, publicRoutes, RouteNames } from '../router';
 import authStore from '../stores/authStore';
 
 export const AppRouter = observer(() => {
-	React.useEffect(() => {
-		authStore.getUser();
-	});
 	return (
 		<div>
 			{authStore.isAuth ? (

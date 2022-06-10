@@ -2,6 +2,8 @@ import { makeAutoObservable } from 'mobx';
 
 import { User } from '../types';
 import auth from '../utils/api/auth';
+import dialgosStore from './dialgosStore';
+import messagesStore from './messagesStore';
 
 class AuthStore {
 	isAuth: boolean = false;
@@ -26,7 +28,6 @@ class AuthStore {
 
 	async login(email: string, password: string) {
 		const { data } = await auth.auth(email, password);
-		console.log(data);
 		if (
 			data.message === 'Incorrect password or email' ||
 			data.message === 'User not found' ||
@@ -36,9 +37,16 @@ class AuthStore {
 		} else {
 			localStorage.setItem('token', data.token);
 			this.setUser(data.user);
-			this.setErrorMessage(data.message);
-			console.log(data.user);
 		}
+	}
+
+	logOut() {
+		dialgosStore.dialogues = [];
+		dialgosStore.currentDialog = null;
+		messagesStore.currentMessages = [];
+		localStorage.removeItem('token');
+		this.user = {};
+		this.isAuth = false;
 	}
 
 	setErrorMessage(err: string) {
@@ -49,7 +57,6 @@ class AuthStore {
 		const { data } = await auth.getUser();
 		if (data.email) {
 			this.setUser(data);
-			console.log(data);
 		}
 	}
 }

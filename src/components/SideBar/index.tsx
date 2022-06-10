@@ -6,6 +6,7 @@ import { dialogsItem } from '../../types';
 import { observer } from 'mobx-react-lite';
 import dialogsStore from '../../stores/dialgosStore';
 import { SideMenu } from './SideMenu';
+import authStore from '../../stores/authStore';
 
 const SideBarStyles = styled.div`
 	background-color: #1c1d2c;
@@ -89,13 +90,19 @@ export const SideBar = observer(() => {
 			dialogsStore.fetchDialogs();
 			setLoaded(true);
 		})();
-	}, []);
+	}, [authStore.isAuth]);
 
-	const filteredDialogs = dialogsStore.dialogues.filter(item =>
-		item.message.user.fullname
-			.toLowerCase()
-			.includes(searchValue.toLowerCase()),
-	);
+	const filteredDialogs = dialogsStore.dialogues
+		.filter(item =>
+			item.partner.fullname
+				.toLowerCase()
+				.includes(searchValue.toLowerCase()),
+		)
+		.sort((before_el, after_el) => {
+			if (before_el.updatedAt) return -1;
+			else if (after_el.updatedAt) return 1;
+			else return 0;
+		});
 	return (
 		<SideBarStyles>
 			<UserBlock>

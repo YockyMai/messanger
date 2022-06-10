@@ -35,9 +35,7 @@ interface IEmojiPicker {
 }
 
 export const EmojiPicker: React.FC<IEmojiPicker> = ({ inputDiv }) => {
-	const onEmojiClick = (event: any, emojiObject: any) => {
-		inputDiv.current && console.log(inputDiv.current.innerHTML);
-	};
+	const onEmojiClick = (event: any, emojiObject: any) => {};
 
 	useEffect(() => {}, []);
 

@@ -22,6 +22,9 @@ const AppWraper = styled.div`
 `;
 
 function App() {
+	React.useEffect(() => {
+		authStore.getUser();
+	});
 	return (
 		<AppWraper>
 			<AppRouter />

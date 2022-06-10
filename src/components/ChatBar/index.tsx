@@ -6,6 +6,8 @@ import { ChatBarHeader } from './ChatBarHeader';
 import { observer } from 'mobx-react-lite';
 import messagesStore from '../../stores/messagesStore';
 import { Loader } from '../UI/Loader';
+import dialgosStore from '../../stores/dialgosStore';
+import authStore from '../../stores/authStore';
 
 const ChatBarStyles = styled.div`
 	height: 100%;
@@ -35,6 +37,12 @@ const MessageInfo = styled.div`
 
 export const ChatBar = observer(() => {
 	const [searchValue, setSearchValue] = React.useState('');
+	const [contextIsOpen, setContextIsOpen] = React.useState(false);
+
+	React.useEffect(() => {
+		dialgosStore.currentDialog?._id &&
+			messagesStore.fetchMessages(dialgosStore.currentDialog?._id);
+	}, [dialgosStore.currentDialog]);
 
 	const filteredMessages =
 		searchValue.length > 0
@@ -60,6 +68,11 @@ export const ChatBar = observer(() => {
 					<>
 						{filteredMessages.map((el, index) => (
 							<Message
+								isMe={
+									el.user._id !== authStore.user._id
+										? false
+										: true
+								}
 								key={index}
 								index={index}
 								text={el.text}

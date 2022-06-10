@@ -4,6 +4,7 @@ import { Avatar } from '../Avatar';
 import friendsImg from '../../assets/img/friends.svg';
 import infoImg from '../../assets/img/info.svg';
 import settingsFilter from '../../assets/img/settingParams.svg';
+import logOutSvg from '../../assets/img/leaveChat.svg';
 import { Input } from '../Input';
 import { Friend } from '../Friend';
 import { SideItem } from './SideItem';
@@ -11,6 +12,8 @@ import authStore from '../../stores/authStore';
 import { User } from '../../types';
 import user from '../../utils/api/user';
 import { Loader } from '../UI/Loader';
+import { useNavigate } from 'react-router-dom';
+import { RouteNames } from '../../router';
 
 const SideMenuStyle = styled.div<{ sideIsOpen: boolean }>`
 	height: 100vh;
@@ -119,6 +122,8 @@ export const SideMenu: React.FC<SideMenuProps> = ({
 	menuBtnRef,
 }) => {
 	const sideMenu = React.useRef(null);
+	const navigate = useNavigate();
+
 	const [searchValue, setSearchValue] = React.useState('');
 
 	const [searchResult, setSearchResult] = React.useState<User[]>([]);
@@ -216,7 +221,11 @@ export const SideMenu: React.FC<SideMenuProps> = ({
 						{searchResult.length > 0 ? (
 							<>
 								{searchResult.map((user: User) => (
-									<Friend key={user._id} user={user} />
+									<Friend
+										setSideIsOpen={setSideIsOpen}
+										key={user._id}
+										user={user}
+									/>
 								))}
 							</>
 						) : (
@@ -248,6 +257,14 @@ export const SideMenu: React.FC<SideMenuProps> = ({
 							</a>
 						</p>
 					</SideItem>
+					<SideItem
+						color="#e25c5c"
+						callback={() => {
+							authStore.logOut();
+						}}
+						icon={logOutSvg}
+						title="Sign out"
+					/>
 				</SideItemContent>
 			</SideMenuContent>
 		</SideMenuStyle>

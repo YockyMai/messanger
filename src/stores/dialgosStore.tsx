@@ -2,11 +2,13 @@ import { action, flow, makeObservable, observable } from 'mobx';
 import React from 'react';
 import { dialogsItem } from '../types';
 import { dialogs } from '../utils/api';
+import authStore from './authStore';
 import messagesStore from './messagesStore';
 
 class DialogsStore {
 	dialogues: dialogsItem[] = [];
-	currentDialog = '';
+	currentDialog: dialogsItem | null = null;
+
 	constructor() {
 		makeObservable(this, {
 			dialogues: observable,
@@ -22,10 +24,23 @@ class DialogsStore {
 			.getAll()
 			.then(res => {
 				this.setDialogs(res.data);
-				this.setCurrentDialog(res.data[0]._id);
+				this.setCurrentDialog(res.data[0]);
 			})
 			.catch(err => {
 				console.log(err);
+			});
+	}
+
+	createDialog(partnerId: string, messageText: string) {
+		dialogs
+			.createDialog(partnerId, messageText)
+			.then(res => {
+				console.log(res);
+				this.addDialog(res.data.dialogs);
+				this.setCurrentDialog(res.data.dialogs);
+			})
+			.catch(e => {
+				console.log(e);
 			});
 	}
 
@@ -33,9 +48,13 @@ class DialogsStore {
 		this.dialogues = dialogs;
 	}
 
-	setCurrentDialog(_id: string) {
-		this.currentDialog = _id;
-		messagesStore.fetchMessages(_id);
+	addDialog(dialog: dialogsItem) {
+		this.dialogues.unshift(dialog);
+	}
+
+	setCurrentDialog(dialog: dialogsItem) {
+		this.currentDialog = dialog;
+		// messagesStore.fetchMessages(dialog._id);
 	}
 }
 

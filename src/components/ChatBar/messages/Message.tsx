@@ -7,24 +7,13 @@ import messageUnread from '../../../assets/img/messageUnread.svg';
 import { AudioMessage } from './AudioMessage';
 import { observer } from 'mobx-react-lite';
 import messagesStore from '../../../stores/messagesStore';
-interface MessageProps {
-	fullname: string;
-	text?: string | undefined;
-	date: string;
-	isMe?: boolean;
-	isReaded?: boolean;
-	attachments?: object[] | undefined;
-	audio?: string;
-	index?: number;
-	user_id: string;
-}
+import { ContextMenu } from '../../UI/ContextMenu';
+import trashImg from '../../../assets/img/trash.svg';
+import { Time } from '../../Time';
 
-interface MessageStylesProps {
-	isMe: boolean;
-}
-
-const MessageStyles = styled.div<MessageStylesProps>`
+const MessageStyles = styled.div<{ isMe: boolean }>`
 	display: flex;
+	position: relative;
 	a {
 		text-decoration: none;
 		&:hover {
@@ -85,6 +74,25 @@ const MessageStyles = styled.div<MessageStylesProps>`
 	}
 `;
 
+const MessageContext = styled.div<{ xCoords: number; yCoords: number }>`
+	position: absolute;
+	left: ${props => props.xCoords}px;
+	top: ${props => props.yCoords}px;
+	transform: translate(30%, -105%);
+`;
+
+interface MessageProps {
+	fullname: string;
+	text?: string | undefined;
+	date: string;
+	isMe?: boolean;
+	isReaded?: boolean;
+	attachments?: object[] | undefined;
+	audio?: string;
+	index?: number;
+	user_id: string;
+}
+
 export const Message: React.FC<MessageProps> = observer(
 	({
 		fullname,
@@ -98,19 +106,45 @@ export const Message: React.FC<MessageProps> = observer(
 		user_id,
 	}) => {
 		const scrollTo = React.useRef<HTMLDivElement>(null);
+		const messageEl = React.useRef<HTMLDivElement | null>(null);
+		const msgContext = React.useRef<HTMLDivElement | null>(null);
 
 		React.useEffect(() => {
+			document.body.addEventListener('click', (e: any) => {
+				if (!e.path.includes(msgContext.current)) {
+					setContextIsOpen(false);
+				}
+			});
+
 			scrollTo.current && scrollTo.current.scrollIntoView();
 		}, []);
 
+		// const closeContext = (e: MouseEvent) => {};
+
+		const [contextIsOpen, setContextIsOpen] = React.useState(false);
+		const [contextCoords, setContextCoords] = React.useState<
+			[coordsX: number, coordsY: number]
+		>([230, 230]);
+
 		return (
 			<MessageStyles
+				onContextMenu={e => {
+					e.preventDefault();
+					setContextIsOpen(!contextIsOpen);
+					if (messageEl.current) {
+						let targetCoords =
+							messageEl.current.getBoundingClientRect();
+						let xCoord = e.clientX - targetCoords.left;
+						let yCoord = e.clientY - targetCoords.top;
+						setContextCoords([xCoord, yCoord]);
+					}
+				}}
 				ref={
 					messagesStore.currentMessages.length - 1 === index //FIXME: corrected scrolling to last read message
 						? scrollTo
 						: null
 				}
-				isMe={isMe || false}>
+				isMe={isMe ? isMe : false}>
 				<Avatar
 					fullname={fullname}
 					user_id={user_id}
@@ -119,7 +153,7 @@ export const Message: React.FC<MessageProps> = observer(
 					height="50px"
 				/>
 				{audio ? (
-					<div className="audio-box">
+					<div className="audio-box" ref={audio ? messageEl : null}>
 						<AudioMessage audio={audio} />
 						<div className="message-info">
 							<span>{date}</span>
@@ -131,7 +165,7 @@ export const Message: React.FC<MessageProps> = observer(
 						</div>
 					</div>
 				) : text ? (
-					<div className="message-box">
+					<div className="message-box" ref={text ? messageEl : null}>
 						<a href="#">
 							<h4>{isMe ? 'You' : fullname}</h4>
 						</a>
@@ -154,7 +188,9 @@ export const Message: React.FC<MessageProps> = observer(
 							</div>
 						</div>
 						<div className="message-info">
-							<span>{date}</span>
+							<span>
+								<Time time={date} />
+							</span>
 							<img
 								src={isReaded ? messageRead : messageUnread}
 								alt="checked message"
@@ -163,8 +199,22 @@ export const Message: React.FC<MessageProps> = observer(
 						</div>
 					</div>
 				) : (
-					<div className="file-box"></div>
+					<div
+						className="file-box"
+						ref={!text ? messageEl : null}></div>
 				)}
+
+				<MessageContext
+					ref={msgContext}
+					xCoords={contextCoords[0]}
+					yCoords={contextCoords[1]}>
+					<ContextMenu isOpen={contextIsOpen}>
+						<li className="warning--action">
+							<img src={trashImg} alt="trash" />
+							<p>Delete ' {text} ' message</p>
+						</li>
+					</ContextMenu>
+				</MessageContext>
 			</MessageStyles>
 		);
 	},

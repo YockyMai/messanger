@@ -129,7 +129,7 @@ export const Login = observer(() => {
 	const register = async () => {
 		if (checkValidName() && checkValidEmail() && checkValidPass()) {
 			// register logic
-			console.log('register in processing');
+
 			const result = await authStore.registration(
 				email,
 				password,

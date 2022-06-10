@@ -129,7 +129,6 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 	const [selectedFiles, setSelectedFiles] = React.useState<any>([]);
 
 	const [selectedEmoji, selectEmoji] = React.useState<any>([]);
-	console.log(selectedFiles);
 
 	React.useEffect(() => {
 		inputDiv && inputDiv.current && inputDiv.current.focus();
@@ -137,7 +136,6 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 
 	const handleSetMessage = (e: any) => {
 		setMessage(e.currentTarget.textContent);
-
 		e.currentTarget.textContent != ''
 			? setShowSend(true)
 			: setShowSend(false);
@@ -145,9 +143,7 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 
 	const sendMessage = (e: KeyboardEvent) => {
 		if (e.shiftKey && e.keyCode === 13) {
-			console.log('перенос');
 		} else if (message?.length > 0 && e.keyCode === 13) {
-			console.log('submit');
 		}
 	};
 	return (
@@ -159,7 +155,7 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 				contentEditable
 				role="textbox"
 				aria-multiline
-				onChange={e => {
+				onInput={e => {
 					handleSetMessage(e as any);
 				}}
 				onKeyDown={(e: any) => {

@@ -1,12 +1,19 @@
 import React, { SetStateAction } from 'react';
 import styled from 'styled-components';
 
-const SideItemStyle = styled.div<{ isOpen?: boolean }>`
+const SideItemStyle = styled.div<{
+	isOpen?: boolean;
+	openningItem?: boolean;
+	color?: string;
+}>`
 	p {
 		margin-left: 10px;
 	}
 
 	.sideItem {
+		p {
+			color: ${props => (props.color ? props.color : '#fff')};
+		}
 		&:hover {
 			background-color: #171823;
 			cursor: pointer;
@@ -24,6 +31,7 @@ const SideItemStyle = styled.div<{ isOpen?: boolean }>`
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+
 		.openStatus {
 			transition: 0.2s;
 			position: relative;
@@ -37,16 +45,17 @@ const SideItemStyle = styled.div<{ isOpen?: boolean }>`
 			&::after {
 				position: absolute;
 				content: '';
-				background-color: #fff;
+				background-color: ${props =>
+					props.openningItem ? `#fff` : 'transparent'};
 				width: 1px;
 				height: 10px;
-				background-color: #fff;
 				transform: rotate(45deg);
 			}
 			&::before {
 				position: absolute;
 				content: '';
-				background-color: #fff;
+				background-color: ${props =>
+					props.openningItem ? `#fff` : 'transparent'};
 				transform: rotate(-45deg);
 				width: 1px;
 				height: 10px;
@@ -111,19 +120,27 @@ const SideItemStyle = styled.div<{ isOpen?: boolean }>`
 `;
 
 interface SideItemProps {
-	children: React.ReactNode;
+	children?: React.ReactNode;
 	icon: string;
 	title: string;
+	callback?: () => void;
+	color?: string;
 }
 
 export const SideItem: React.FC<SideItemProps> = ({
 	children,
 	icon,
 	title,
+	callback,
+	color,
 }) => {
 	const [isOpen, setIsOpen] = React.useState(false);
 	return (
-		<SideItemStyle isOpen={isOpen}>
+		<SideItemStyle
+			color={color}
+			openningItem={children ? true : false}
+			isOpen={isOpen}
+			onClick={() => callback && callback()}>
 			<div
 				className="sideItem"
 				onClick={() => {

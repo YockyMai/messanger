@@ -1,5 +1,13 @@
 import axios from '../../core/axios';
 
 export default {
-	getAll: async () => await axios.get('/dialogs'),
+	getAll: () => {
+		return axios.get('/dialog');
+	},
+	createDialog: (partnerId: string, messageText: string) => {
+		return axios.post('/dialog', {
+			partner: partnerId,
+			text: messageText,
+		});
+	},
 };

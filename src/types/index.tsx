@@ -1,11 +1,10 @@
 export interface dialogsItem {
 	_id: string;
-	unreaded: 1;
-	message: {
-		user: any;
-		text: string;
-		createdAt: string;
-	};
+	unreaded: number;
+	author: User;
+	partner: User;
+	createdAt: string;
+	updatedAt: string;
 
 	// message: {
 	// 	user: {
@@ -23,11 +22,7 @@ export interface messageItem {
 	text: string;
 	attachments: [] | null;
 	createdAt: string;
-	user: {
-		_id: string;
-		fullname: string;
-		avatar: string | null;
-	};
+	user: User;
 	audio?: string;
 	dialogs: string;
 }

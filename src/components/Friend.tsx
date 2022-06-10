@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import dialgosStore from '../stores/dialgosStore';
 import { User } from '../types';
 import { Avatar } from './Avatar';
 
@@ -52,9 +53,14 @@ const GoToChat = styled.div`
 
 interface IFriend {
 	user: User;
+	setSideIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Friend: React.FC<IFriend> = ({ user }) => {
+export const Friend: React.FC<IFriend> = ({ user, setSideIsOpen }) => {
+	const goToChat = () => {
+		dialgosStore.createDialog(user._id, 'Привет');
+		setSideIsOpen(false);
+	};
 	return (
 		<FriendStyle>
 			<Avatar
@@ -68,7 +74,7 @@ export const Friend: React.FC<IFriend> = ({ user }) => {
 				<p>{user.fullname}</p>
 			</Link>
 
-			<GoToChat>
+			<GoToChat onClick={goToChat}>
 				<svg
 					width="24"
 					height="24"

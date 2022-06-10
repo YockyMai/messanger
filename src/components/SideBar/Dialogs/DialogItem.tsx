@@ -6,13 +6,13 @@ import { Time } from '../../Time';
 import { format, isThisYear, isToday, parseISO } from 'date-fns';
 import dialgosStore from '../../../stores/dialgosStore';
 import { observer } from 'mobx-react-lite';
+import { dialogsItem, User } from '../../../types';
+import messagesStore from '../../../stores/messagesStore';
 
 interface DialgosStylesProps {
-	user: {
-		isOnline: boolean;
-	};
+	isOnline: boolean;
 	_id: string;
-	selectedId: string;
+	selectedId?: string;
 }
 
 const DialogsStyles = styled.div<DialgosStylesProps>`
@@ -26,7 +26,7 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 	.dialog-avatar {
 		position: relative;
 		${props =>
-			props.user.isOnline
+			props.isOnline
 				? `&::before {
 			position: absolute;
 			z-index: 1;
@@ -92,18 +92,27 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 `;
 
 interface DialogProps {
+	setOnSelect: (dialogItem: dialogsItem) => void;
+	message?: string;
+	partner: User;
+	author: User;
+	createdAt: string;
 	_id: string;
-	message: {
-		user: any;
-		text: string;
-		createdAt: string;
-	};
+	updatedAt: string;
 	unreaded: number;
-	setOnSelect: (_id: string) => void;
 }
 
 export const DialogItem: React.FC<DialogProps> = observer(
-	({ message, unreaded, setOnSelect, _id }) => {
+	({
+		partner,
+		setOnSelect,
+		_id,
+		unreaded,
+		message,
+		author,
+		createdAt,
+		updatedAt,
+	}) => {
 		const getMessageTime = (created_at: string) => {
 			if (isToday(parseISO(created_at)))
 				return format(parseISO(created_at), 'HH:mm'); //Если сообщение написано сегодня
@@ -114,30 +123,34 @@ export const DialogItem: React.FC<DialogProps> = observer(
 
 		return (
 			<DialogsStyles
-				selectedId={dialgosStore.currentDialog}
+				selectedId={dialgosStore.currentDialog?._id}
 				_id={_id}
-				user={message.user}
+				isOnline={false}
 				onClick={() => {
-					setOnSelect(_id);
+					setOnSelect({
+						_id,
+						unreaded,
+						author,
+						partner,
+						createdAt,
+						updatedAt,
+					});
+					messagesStore.fetchMessages(_id);
 				}}>
 				<div className="dialog-avatar">
 					<Avatar
-						fullname={message.user.fullname}
-						user_id={message.user._id}
-						src={message.user.avatar && message.user.avatar}
+						fullname={partner.fullname}
+						user_id={partner._id}
+						src={partner.avatar && partner.avatar}
 						width="50px"
 						height="50px"
 					/>
 				</div>
 				<div className="dialog">
 					<div className="dialog-info">
-						<h4 className="dialog-title">
-							{message.user.fullname}
-						</h4>
+						<h4 className="dialog-title">{partner.fullname}</h4>
 						<p className="dialogs-message">
-							{message.text != ''
-								? message.text
-								: 'Write your first message...'}
+							{message ? message : 'Write your first message...'}
 						</p>
 					</div>
 					<div className="dialog-other">

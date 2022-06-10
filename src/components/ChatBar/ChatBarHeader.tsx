@@ -229,7 +229,7 @@ export const ChatBarHeader: React.FC<ChatBarHeader> = observer(
 
 		const searchMessage = (e: KeyboardEvent) => {
 			if (e.keyCode === 13) {
-				console.log(e.key); //Search function
+				//Search function
 			}
 			if (e.keyCode === 27) {
 				setSearchIsOpen(false);
@@ -239,8 +239,8 @@ export const ChatBarHeader: React.FC<ChatBarHeader> = observer(
 		};
 
 		const username = dialgosStore.dialogues.find(
-			el => el._id === dialgosStore.currentDialog,
-		)?.message.user.fullname;
+			el => el._id === dialgosStore.currentDialog?._id,
+		)?.partner.fullname; //TODO: FIX USERNAME
 
 		return (
 			<ChatBarHeaderStyles>
@@ -310,11 +310,11 @@ export const ChatBarHeader: React.FC<ChatBarHeader> = observer(
 								</li>
 								<li className="block-chat">
 									<img src={blockSvg} alt="" />{' '}
-									<p>Block user</p>
+									<p>Block user and leave</p>
 								</li>
 								<li className="leave-chat">
 									<img src={leaveChatSvg} alt="" />{' '}
-									<p>Leave</p>
+									<p>Clear chat</p>
 								</li>
 							</ChatSettingsPopup>
 						</CSSTransition>

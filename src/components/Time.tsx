@@ -1,4 +1,5 @@
 import { formatDistance, subDays } from 'date-fns';
+import { toDate } from 'date-fns/esm';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -6,6 +7,7 @@ const TimeStyles = styled.div`
 	color: #8e8a9c;
 	font-size: 14px;
 	font-weight: 200;
+	display: inline-block;
 `;
 
 interface TimeProps {
@@ -13,5 +15,7 @@ interface TimeProps {
 }
 
 export const Time: React.FC<TimeProps> = ({ time }) => {
+	// const convertedTime = toDate(Number(time));
+	console.log(new Date());
 	return <TimeStyles>{time}</TimeStyles>;
 };
