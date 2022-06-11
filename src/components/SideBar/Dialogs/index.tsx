@@ -7,6 +7,7 @@ import dialgosStore from '../../../stores/dialgosStore';
 import messagesStore from '../../../stores/messagesStore';
 import authStore from '../../../stores/authStore';
 import { observer } from 'mobx-react-lite';
+import socket from '../../../core/socket';
 
 const DilagosStyles = styled.div`
 	overflow-y: auto;
@@ -38,10 +39,6 @@ interface DialogsProps {
 
 export const Dialogs: React.FC<DialogsProps> = observer(
 	({ dialogsItems, loaded }) => {
-		React.useEffect(() => {
-			dialgosStore.setCurrentDialog(dialogsItems[0]);
-		});
-
 		const setOnSelect = (dialogItem: dialogsItem) => {
 			dialgosStore.setCurrentDialog(dialogItem);
 		};

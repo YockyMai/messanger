@@ -8,6 +8,7 @@ import dialgosStore from '../../../stores/dialgosStore';
 import { observer } from 'mobx-react-lite';
 import { dialogsItem, User } from '../../../types';
 import messagesStore from '../../../stores/messagesStore';
+import { Link, useLocation } from 'react-router-dom';
 
 interface DialgosStylesProps {
 	isOnline: boolean;
@@ -23,6 +24,15 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 	padding: 5px 8px 5px 8px;
 	background-color: ${props =>
 		props._id == props.selectedId && '#171823'} !important;
+
+	a {
+		color: #fff;
+		text-decoration: none;
+		text-transform: none;
+		display: flex;
+		align-items: center;
+		width: 100%;
+	}
 	.dialog-avatar {
 		position: relative;
 		${props =>
@@ -113,6 +123,8 @@ export const DialogItem: React.FC<DialogProps> = observer(
 		createdAt,
 		updatedAt,
 	}) => {
+		// const pathLocation = useLocation();
+		// const dialogId = pathLocation.pathname.replace('/im/', '');
 		const getMessageTime = (created_at: string) => {
 			if (isToday(parseISO(created_at)))
 				return format(parseISO(created_at), 'HH:mm'); //Если сообщение написано сегодня
@@ -137,35 +149,41 @@ export const DialogItem: React.FC<DialogProps> = observer(
 					});
 					messagesStore.fetchMessages(_id);
 				}}>
-				<div className="dialog-avatar">
-					<Avatar
-						fullname={partner.fullname}
-						user_id={partner._id}
-						src={partner.avatar && partner.avatar}
-						width="50px"
-						height="50px"
-					/>
-				</div>
-				<div className="dialog">
-					<div className="dialog-info">
-						<h4 className="dialog-title">{partner.fullname}</h4>
-						<p className="dialogs-message">
-							{message ? message : 'Write your first message...'}
-						</p>
+				<Link to={_id}>
+					<div className="dialog-avatar">
+						<Avatar
+							fullname={partner.fullname}
+							user_id={partner._id}
+							src={partner.avatar && partner.avatar}
+							width="50px"
+							height="50px"
+						/>
 					</div>
-					<div className="dialog-other">
-						{/* <Time time={getMessageTime(message.createdAt)} /> */}
-						{unreaded > 0 && (
-							<div className="unreaded-messages">
-								{unreaded > 0 && (
-									<p>
-										{unreaded > 99999 ? '+99999' : unreaded}
-									</p>
-								)}
-							</div>
-						)}
+					<div className="dialog">
+						<div className="dialog-info">
+							<h4 className="dialog-title">{partner.fullname}</h4>
+							<p className="dialogs-message">
+								{message
+									? message
+									: 'Write your first message...'}
+							</p>
+						</div>
+						<div className="dialog-other">
+							{/* <Time time={getMessageTime(message.createdAt)} /> */}
+							{unreaded > 0 && (
+								<div className="unreaded-messages">
+									{unreaded > 0 && (
+										<p>
+											{unreaded > 99999
+												? '+99999'
+												: unreaded}
+										</p>
+									)}
+								</div>
+							)}
+						</div>
 					</div>
-				</div>
+				</Link>
 			</DialogsStyles>
 		);
 	},

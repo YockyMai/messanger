@@ -62,9 +62,7 @@ export const ChatBar = observer(() => {
 			/>
 
 			<div className="messages-box">
-				{!messagesStore.loaded ? (
-					<Loader />
-				) : filteredMessages.length > 0 ? (
+				{filteredMessages.length > 0 ? (
 					<>
 						{filteredMessages.map((el, index) => (
 							<Message
@@ -84,7 +82,7 @@ export const ChatBar = observer(() => {
 					</>
 				) : (
 					<MessageInfo>
-						<p>No messages found</p>
+						<p>Choose dialog for continue</p>
 					</MessageInfo>
 				)}
 			</div>

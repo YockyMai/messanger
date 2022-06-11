@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { KeyboardEvent } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import dialgosStore from '../stores/dialgosStore';
 import { User } from '../types';
 import { Avatar } from './Avatar';
+import { Button } from './Button';
+import { Input } from './Input';
+import { MyModal } from './UI/MyModal';
 
 const FriendStyle = styled.div`
 	display: flex;
@@ -57,9 +60,15 @@ interface IFriend {
 }
 
 export const Friend: React.FC<IFriend> = ({ user, setSideIsOpen }) => {
-	const goToChat = () => {
-		dialgosStore.createDialog(user._id, 'Привет');
-		setSideIsOpen(false);
+	const [modalIsOpen, setModalOpen] = React.useState(false);
+	const [messageValue, setMessageValue] = React.useState('');
+
+	const createChat = () => {
+		if (messageValue.length > 0) {
+			dialgosStore.createDialog(user._id, messageValue);
+			setSideIsOpen(false);
+			setModalOpen(false);
+		}
 	};
 	return (
 		<FriendStyle>
@@ -74,7 +83,7 @@ export const Friend: React.FC<IFriend> = ({ user, setSideIsOpen }) => {
 				<p>{user.fullname}</p>
 			</Link>
 
-			<GoToChat onClick={goToChat}>
+			<GoToChat onClick={() => setModalOpen(true)}>
 				<svg
 					width="24"
 					height="24"
@@ -103,6 +112,30 @@ export const Friend: React.FC<IFriend> = ({ user, setSideIsOpen }) => {
 					/>
 				</svg>
 			</GoToChat>
+
+			<MyModal
+				title={`Write the first message to the user ${user.fullname}`}
+				setIsOpen={setModalOpen}
+				modalIsOpen={modalIsOpen}>
+				<div
+					className="modal__sendMsg"
+					onKeyDown={(e: KeyboardEvent) => {
+						if (e.keyCode === 13) {
+							createChat();
+						}
+					}}>
+					<Input
+						placeholder="Write a message"
+						width="100%"
+						type="text"
+						value={messageValue}
+						setValue={setMessageValue}
+					/>
+					<Button width="100%" onClick={createChat}>
+						Send
+					</Button>
+				</div>
+			</MyModal>
 		</FriendStyle>
 	);
 };

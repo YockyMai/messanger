@@ -18,7 +18,12 @@ export const AppRouter = observer(() => {
 
 					<Route
 						element={<Navigate to={RouteNames.IM} replace />}
-						path={'*'}
+						path={RouteNames.LOGIN}
+					/>
+
+					<Route
+						element={<Navigate to={RouteNames.IM} replace />}
+						path={RouteNames.REGISTRATION}
 					/>
 				</Routes>
 			) : (

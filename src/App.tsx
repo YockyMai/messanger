@@ -1,10 +1,8 @@
 import React from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
-import { Main } from './pages/Main';
-import { Login } from './pages/Login';
 import { AppRouter } from './components/AppRouter';
 import authStore from './stores/authStore';
+import socket from './core/socket';
 
 const AppWraper = styled.div`
 	color: #fff;
@@ -25,6 +23,7 @@ function App() {
 	React.useEffect(() => {
 		authStore.getUser();
 	});
+
 	return (
 		<AppWraper>
 			<AppRouter />

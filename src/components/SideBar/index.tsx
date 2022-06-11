@@ -7,6 +7,8 @@ import { observer } from 'mobx-react-lite';
 import dialogsStore from '../../stores/dialgosStore';
 import { SideMenu } from './SideMenu';
 import authStore from '../../stores/authStore';
+import socket from '../../core/socket';
+import dialgosStore from '../../stores/dialgosStore';
 
 const SideBarStyles = styled.div`
 	background-color: #1c1d2c;
@@ -85,13 +87,21 @@ export const SideBar = observer(() => {
 	const menuBtn = React.useRef(null);
 	const [loaded, setLoaded] = React.useState(false);
 	React.useEffect(() => {
-		(() => {
-			setLoaded(false);
-			dialogsStore.fetchDialogs();
-			setLoaded(true);
-		})();
-	}, [authStore.isAuth]);
+		setLoaded(false);
+		dialogsStore.fetchDialogs();
+		setLoaded(true);
 
+		socket.on('SERVER:DIALOG_CREATED', data => {
+			if (
+				data.contributors.author === authStore.user._id ||
+				data.contributors.partner === authStore.user._id
+			) {
+				dialgosStore.fetchDialogs();
+			}
+
+			console.log(data);
+		});
+	}, [authStore.isAuth]);
 	const filteredDialogs = dialogsStore.dialogues
 		.filter(item =>
 			item.partner.fullname

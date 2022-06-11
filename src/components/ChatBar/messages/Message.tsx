@@ -116,8 +116,27 @@ export const Message: React.FC<MessageProps> = observer(
 				}
 			});
 
+			document.body.addEventListener('contextmenu', (e: any) => {
+				//TODO: fix multiply contexts in msg
+				// if (!e.path.includes(msgContext.current)) {
+				// 	setContextIsOpen(false);
+				// 	console.log('закрыть');
+				// }
+			});
+
 			scrollTo.current && scrollTo.current.scrollIntoView();
 		}, []);
+
+		const openMsgContext = (e: MouseEvent) => {
+			e.preventDefault();
+			setContextIsOpen(true);
+			if (messageEl.current) {
+				let targetCoords = messageEl.current.getBoundingClientRect();
+				let xCoord = e.clientX - targetCoords.left;
+				let yCoord = e.clientY - targetCoords.top;
+				setContextCoords([xCoord, yCoord]);
+			}
+		};
 
 		// const closeContext = (e: MouseEvent) => {};
 
@@ -129,15 +148,7 @@ export const Message: React.FC<MessageProps> = observer(
 		return (
 			<MessageStyles
 				onContextMenu={e => {
-					e.preventDefault();
-					setContextIsOpen(!contextIsOpen);
-					if (messageEl.current) {
-						let targetCoords =
-							messageEl.current.getBoundingClientRect();
-						let xCoord = e.clientX - targetCoords.left;
-						let yCoord = e.clientY - targetCoords.top;
-						setContextCoords([xCoord, yCoord]);
-					}
+					openMsgContext(e as any);
 				}}
 				ref={
 					messagesStore.currentMessages.length - 1 === index //FIXME: corrected scrolling to last read message

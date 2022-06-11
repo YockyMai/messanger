@@ -12,8 +12,6 @@ import authStore from '../../stores/authStore';
 import { User } from '../../types';
 import user from '../../utils/api/user';
 import { Loader } from '../UI/Loader';
-import { useNavigate } from 'react-router-dom';
-import { RouteNames } from '../../router';
 
 const SideMenuStyle = styled.div<{ sideIsOpen: boolean }>`
 	height: 100vh;
@@ -122,7 +120,6 @@ export const SideMenu: React.FC<SideMenuProps> = ({
 	menuBtnRef,
 }) => {
 	const sideMenu = React.useRef(null);
-	const navigate = useNavigate();
 
 	const [searchValue, setSearchValue] = React.useState('');
 

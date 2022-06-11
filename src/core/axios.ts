@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { AxiosRoutes } from './axiosRoutes';
 
 const jwtToken = localStorage.getItem('token');
 
@@ -6,7 +7,7 @@ const jwtToken = localStorage.getItem('token');
 //https://hiyocky.herokuapp.com/'
 
 const instance = axios.create({
-	baseURL: 'http://localhost:8080/',
+	baseURL: AxiosRoutes.prod,
 	headers: {
 		token: jwtToken ? jwtToken : '',
 		'X-Custom-Header': 'foobar',
