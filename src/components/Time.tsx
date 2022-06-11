@@ -16,6 +16,5 @@ interface TimeProps {
 
 export const Time: React.FC<TimeProps> = ({ time }) => {
 	// const convertedTime = toDate(Number(time));
-	console.log(new Date());
 	return <TimeStyles>{time}</TimeStyles>;
 };

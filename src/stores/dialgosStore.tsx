@@ -24,6 +24,7 @@ class DialogsStore {
 			.getAll()
 			.then(res => {
 				this.setDialogs(res.data);
+				console.log(res.data);
 			})
 			.catch(err => {
 				console.log(err);

@@ -27,8 +27,18 @@ class MessagesStore {
 			});
 	}
 
+	handleNewMessage(message: any) {
+		if (dialgosStore.currentDialog?._id === message.dialog._id) {
+			this.addMessage(message);
+		}
+	}
+
 	setMessages(dialogs: messageItem[]) {
 		this.currentMessages = dialogs;
+	}
+
+	addMessage(message: any) {
+		this.currentMessages.push(message);
 	}
 
 	sendMessage(message: messageItem) {

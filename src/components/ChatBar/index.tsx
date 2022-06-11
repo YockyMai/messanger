@@ -5,9 +5,10 @@ import { SendMessage } from './SendMessage';
 import { ChatBarHeader } from './ChatBarHeader';
 import { observer } from 'mobx-react-lite';
 import messagesStore from '../../stores/messagesStore';
-import { Loader } from '../UI/Loader';
 import dialgosStore from '../../stores/dialgosStore';
 import authStore from '../../stores/authStore';
+import socket from '../../core/socket';
+import playNotice from '../../utils/helpers/playNotice';
 
 const ChatBarStyles = styled.div`
 	height: 100%;
@@ -38,6 +39,26 @@ const MessageInfo = styled.div`
 export const ChatBar = observer(() => {
 	const [searchValue, setSearchValue] = React.useState('');
 	const [contextIsOpen, setContextIsOpen] = React.useState(false);
+
+	React.useEffect(() => {
+		console.log('reneder');
+
+		socket.off('SERVER:NEW_MESSAGE').on('SERVER:NEW_MESSAGE', message => {
+			messagesStore.handleNewMessage(message);
+			const dialogues = dialgosStore.dialogues;
+			let isNewMsg = false;
+			dialogues.forEach(dialog => {
+				if (
+					dialog._id === message.dialog._id &&
+					message.dialog._id !== dialgosStore.currentDialog?._id
+				)
+					isNewMsg = true;
+			});
+			if (isNewMsg && message.user._id !== authStore.user._id) {
+				playNotice();
+			}
+		});
+	});
 
 	React.useEffect(() => {
 		dialgosStore.currentDialog?._id &&

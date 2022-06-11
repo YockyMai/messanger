@@ -9,6 +9,7 @@ import { SideMenu } from './SideMenu';
 import authStore from '../../stores/authStore';
 import socket from '../../core/socket';
 import dialgosStore from '../../stores/dialgosStore';
+import playNotice from '../../utils/helpers/playNotice';
 
 const SideBarStyles = styled.div`
 	background-color: #1c1d2c;
@@ -97,6 +98,10 @@ export const SideBar = observer(() => {
 				data.contributors.partner === authStore.user._id
 			) {
 				dialgosStore.fetchDialogs();
+
+				if (data.contributors.author !== authStore.user._id) {
+					playNotice();
+				}
 			}
 
 			console.log(data);
