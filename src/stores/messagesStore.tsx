@@ -41,8 +41,14 @@ class MessagesStore {
 		this.currentMessages.push(message);
 	}
 
-	sendMessage(message: messageItem) {
-		this.currentMessages.push(message);
+	sendMessage(message: any) {
+		if (dialgosStore.currentDialog?._id)
+			messages
+				.createMessage(message, dialgosStore.currentDialog?._id)
+				.then(res => {
+					this.currentMessages.push(res.data);
+					console.log(res);
+				});
 	}
 }
 

@@ -42,6 +42,9 @@ export const Dialogs: React.FC<DialogsProps> = observer(
 		const setOnSelect = (dialogItem: dialogsItem) => {
 			dialgosStore.setCurrentDialog(dialogItem);
 		};
+
+		console.log(dialogsItems);
+
 		return (
 			<DilagosStyles>
 				{dialogsItems.length > 0 ? (

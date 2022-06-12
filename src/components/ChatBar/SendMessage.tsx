@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import socket from '../../core/socket';
+import messagesStore from '../../stores/messagesStore';
 import { EmojiPicker } from '../EmojiPicker';
 
 interface SendMessageProps {}
@@ -141,9 +143,12 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 			: setShowSend(false);
 	};
 
-	const sendMessage = (e: KeyboardEvent) => {
+	const sendMessage = (e: KeyboardEvent | any) => {
 		if (e.shiftKey && e.keyCode === 13) {
+			console.log('перенос');
 		} else if (message?.length > 0 && e.keyCode === 13) {
+			console.log('отпрвка');
+			messagesStore.sendMessage(message);
 		}
 	};
 	return (
@@ -164,7 +169,7 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 
 			{emojiVisible && (
 				<div className="picker">
-					<EmojiPicker inputDiv={inputDiv} />
+					<EmojiPicker />
 				</div>
 			)}
 			<div className="input-actions">

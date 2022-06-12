@@ -9,6 +9,7 @@ import { observer } from 'mobx-react-lite';
 import { dialogsItem, User } from '../../../types';
 import messagesStore from '../../../stores/messagesStore';
 import { Link, useLocation } from 'react-router-dom';
+import authStore from '../../../stores/authStore';
 
 interface DialgosStylesProps {
 	isOnline: boolean;
@@ -76,6 +77,9 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 		}
 
 		.dialog-other {
+			display: flex;
+			align-items: center;
+
 			.unreaded-messages {
 				text-align: right;
 				font-size: 14px;
@@ -90,10 +94,10 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 				max-width: 62px;
 				float: right;
 				padding: 3px 10px 3px 10px;
+				margin-left: 10px;
 				p {
 					overflow: hidden;
 					text-align: center;
-
 					text-overflow: ellipsis;
 				}
 			}
@@ -133,6 +137,9 @@ export const DialogItem: React.FC<DialogProps> = observer(
 			return format(parseISO(created_at), 'd.MM.Y');
 		}; // TODO: refactor time func
 
+		const dialogPartner =
+			partner.fullname === authStore.user.fullname ? author : partner;
+
 		return (
 			<DialogsStyles
 				selectedId={dialgosStore.currentDialog?._id}
@@ -152,16 +159,18 @@ export const DialogItem: React.FC<DialogProps> = observer(
 				<Link to={_id}>
 					<div className="dialog-avatar">
 						<Avatar
-							fullname={partner.fullname}
-							user_id={partner._id}
-							src={partner.avatar && partner.avatar}
+							fullname={dialogPartner.fullname}
+							user_id={dialogPartner._id}
+							src={dialogPartner.avatar && dialogPartner.avatar}
 							width="50px"
 							height="50px"
 						/>
 					</div>
 					<div className="dialog">
 						<div className="dialog-info">
-							<h4 className="dialog-title">{partner.fullname}</h4>
+							<h4 className="dialog-title">
+								{dialogPartner.fullname}
+							</h4>
 							<p className="dialogs-message">
 								{message
 									? message
@@ -169,7 +178,7 @@ export const DialogItem: React.FC<DialogProps> = observer(
 							</p>
 						</div>
 						<div className="dialog-other">
-							{/* <Time time={getMessageTime(message.createdAt)} /> */}
+							<Time time={getMessageTime(updatedAt)} />
 							{unreaded > 0 && (
 								<div className="unreaded-messages">
 									{unreaded > 0 && (

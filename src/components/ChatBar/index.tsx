@@ -44,18 +44,20 @@ export const ChatBar = observer(() => {
 		console.log('reneder');
 
 		socket.off('SERVER:NEW_MESSAGE').on('SERVER:NEW_MESSAGE', message => {
-			messagesStore.handleNewMessage(message);
-			const dialogues = dialgosStore.dialogues;
-			let isNewMsg = false;
-			dialogues.forEach(dialog => {
-				if (
-					dialog._id === message.dialog._id &&
-					message.dialog._id !== dialgosStore.currentDialog?._id
-				)
-					isNewMsg = true;
-			});
-			if (isNewMsg && message.user._id !== authStore.user._id) {
-				playNotice();
+			if (message.user._id !== authStore.user._id) {
+				messagesStore.handleNewMessage(message);
+				const dialogues = dialgosStore.dialogues;
+				let isNewMsg = false;
+				dialogues.forEach(dialog => {
+					if (
+						dialog._id === message.dialog._id &&
+						message.dialog._id !== dialgosStore.currentDialog?._id
+					)
+						isNewMsg = true;
+				});
+				if (isNewMsg && message.user._id !== authStore.user._id) {
+					playNotice();
+				}
 			}
 		});
 	});

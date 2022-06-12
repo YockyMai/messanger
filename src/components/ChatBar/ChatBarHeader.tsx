@@ -11,6 +11,7 @@ import searchImg from '../../assets/img/search.svg';
 import closeImg from '../../assets/img/x-non-v1.svg';
 import { popupMounted, popupUnmunted } from '../../animation';
 import { CSSTransition } from 'react-transition-group';
+import authStore from '../../stores/authStore';
 
 const ChatBarHeaderStyles = styled.div`
 	z-index: 1;
@@ -238,9 +239,11 @@ export const ChatBarHeader: React.FC<ChatBarHeader> = observer(
 			}
 		};
 
-		const username = dialgosStore.dialogues.find(
-			el => el._id === dialgosStore.currentDialog?._id,
-		)?.partner.fullname; //TODO: FIX USERNAME
+		const username =
+			dialgosStore.currentDialog?.author.fullname ===
+			authStore.user.fullname
+				? dialgosStore.currentDialog?.partner.fullname
+				: dialgosStore.currentDialog?.author.fullname;
 
 		return (
 			<ChatBarHeaderStyles>
