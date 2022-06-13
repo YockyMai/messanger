@@ -117,7 +117,6 @@ export const Login = observer(() => {
 				.login(email, password)
 				.then(() => {
 					setIsLoading(false);
-					window.location.href = '/im';
 				})
 				.catch(() => {
 					setIsLoading(false);

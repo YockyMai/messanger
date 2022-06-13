@@ -130,10 +130,6 @@ export const Message: React.FC<MessageProps> = observer(
 			});
 
 			scrollTo.current && scrollTo.current.scrollIntoView();
-
-			return () => {
-				document.body.removeEventListener('scroll', () => {});
-			};
 		}, []);
 
 		const openMsgContext = (e: MouseEvent) => {
