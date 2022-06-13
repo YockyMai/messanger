@@ -1,7 +1,7 @@
 import React, { KeyboardEvent } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import dialgosStore from '../stores/dialgosStore';
+import dialgosStore from '../stores/dialogsStore';
 import { User } from '../types';
 import { Avatar } from './Avatar';
 import { Button } from './Button';

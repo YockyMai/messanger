@@ -5,10 +5,11 @@ import { SendMessage } from './SendMessage';
 import { ChatBarHeader } from './ChatBarHeader';
 import { observer } from 'mobx-react-lite';
 import messagesStore from '../../stores/messagesStore';
-import dialgosStore from '../../stores/dialgosStore';
+import dialgosStore from '../../stores/dialogsStore';
 import authStore from '../../stores/authStore';
 import socket from '../../core/socket';
 import playNotice from '../../utils/helpers/playNotice';
+import { Loader } from '../UI/Loader';
 
 const ChatBarStyles = styled.div`
 	height: 100%;
@@ -19,6 +20,12 @@ const ChatBarStyles = styled.div`
 		padding-left: 40px;
 		padding-top: 80px;
 		padding-bottom: 80px;
+	}
+	.message__loader {
+		position: absolute;
+		left: 48%;
+		transform: translateX(-50%);
+		top: 200px;
 	}
 `;
 
@@ -38,11 +45,8 @@ const MessageInfo = styled.div`
 
 export const ChatBar = observer(() => {
 	const [searchValue, setSearchValue] = React.useState('');
-	const [contextIsOpen, setContextIsOpen] = React.useState(false);
 
 	React.useEffect(() => {
-		console.log('reneder');
-
 		socket.off('SERVER:NEW_MESSAGE').on('SERVER:NEW_MESSAGE', message => {
 			if (message.user._id !== authStore.user._id) {
 				messagesStore.handleNewMessage(message);
@@ -60,6 +64,13 @@ export const ChatBar = observer(() => {
 				}
 			}
 		});
+		socket
+			.off('SERVER:DELETE_MESSAGE')
+			.on('SERVER:DELETE_MESSAGE', message => {
+				if (message.dialog === dialgosStore.currentDialog?._id) {
+					messagesStore.deleteMessage(message._id);
+				}
+			});
 	});
 
 	React.useEffect(() => {
@@ -84,31 +95,43 @@ export const ChatBar = observer(() => {
 				setSearchValue={setSearchValue}
 			/>
 
-			<div className="messages-box">
-				{filteredMessages.length > 0 ? (
-					<>
-						{filteredMessages.map((el, index) => (
-							<Message
-								isMe={
-									el.user._id !== authStore.user._id
-										? false
-										: true
-								}
-								key={index}
-								index={index}
-								text={el.text}
-								date={el.createdAt}
-								user_id={el.user._id}
-								fullname={el.user.fullname}
-							/>
-						))}
-					</>
-				) : (
-					<MessageInfo>
-						<p>Choose dialog for continue</p>
-					</MessageInfo>
-				)}
-			</div>
+			{messagesStore.isLoaded ? (
+				<div className="message__loader">
+					<Loader top="30%" />
+				</div>
+			) : (
+				<div className="messages-box">
+					{filteredMessages.length > 0 ? (
+						<>
+							{filteredMessages.map((el, index) => (
+								<Message
+									isMe={
+										el.user._id !== authStore.user._id
+											? false
+											: true
+									}
+									key={index}
+									index={index}
+									text={el.text}
+									date={el.createdAt}
+									user_id={el.user._id}
+									fullname={el.user.fullname}
+									message_id={el._id}
+								/>
+							))}
+						</>
+					) : !dialgosStore.currentDialog?._id ? (
+						<MessageInfo>
+							<p>Choose any dialog for contiune</p>
+						</MessageInfo>
+					) : (
+						<MessageInfo>
+							<p>The list of messages is empty</p>
+						</MessageInfo>
+					)}
+				</div>
+			)}
+
 			<SendMessage />
 		</ChatBarStyles>
 	);

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { AppRouter } from './components/AppRouter';
 import authStore from './stores/authStore';
 import socket from './core/socket';
+import dialogsStore from './stores/dialogsStore';
 
 const AppWraper = styled.div`
 	color: #fff;

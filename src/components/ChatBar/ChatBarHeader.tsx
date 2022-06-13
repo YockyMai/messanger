@@ -6,7 +6,7 @@ import pinSvg from '../../assets/img/pin.svg';
 import blockSvg from '../../assets/img/block.svg';
 import { Search } from '../Search';
 import { observer } from 'mobx-react-lite';
-import dialgosStore from '../../stores/dialgosStore';
+import dialgosStore from '../../stores/dialogsStore';
 import searchImg from '../../assets/img/search.svg';
 import closeImg from '../../assets/img/x-non-v1.svg';
 import { popupMounted, popupUnmunted } from '../../animation';

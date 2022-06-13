@@ -4,11 +4,11 @@ import { Dialogs } from './Dialogs';
 import { Search } from '../Search';
 import { dialogsItem } from '../../types';
 import { observer } from 'mobx-react-lite';
-import dialogsStore from '../../stores/dialgosStore';
+import dialogsStore from '../../stores/dialogsStore';
 import { SideMenu } from './SideMenu';
 import authStore from '../../stores/authStore';
 import socket from '../../core/socket';
-import dialgosStore from '../../stores/dialgosStore';
+import dialgosStore from '../../stores/dialogsStore';
 import playNotice from '../../utils/helpers/playNotice';
 
 const SideBarStyles = styled.div`
@@ -86,12 +86,8 @@ export const SideBar = observer(() => {
 	const [sideIsOpen, setSideIsOpen] = React.useState(false);
 	const [searchValue, setSearchValue] = React.useState('');
 	const menuBtn = React.useRef(null);
-	const [loaded, setLoaded] = React.useState(false);
 	React.useEffect(() => {
-		setLoaded(false);
 		dialogsStore.fetchDialogs();
-		setLoaded(true);
-
 		socket.on('SERVER:DIALOG_CREATED', data => {
 			if (
 				data.contributors.author === authStore.user._id ||
@@ -103,21 +99,18 @@ export const SideBar = observer(() => {
 					playNotice();
 				}
 			}
-
-			console.log(data);
 		});
 	}, [authStore.isAuth]);
-	const filteredDialogs = dialogsStore.dialogues
-		.filter(item =>
+	const filteredDialogs = dialogsStore.dialogues.filter(
+		item =>
 			item.partner.fullname
 				.toLowerCase()
+				.includes(searchValue.toLowerCase()) ||
+			item.author.fullname
+				.toLowerCase()
 				.includes(searchValue.toLowerCase()),
-		)
-		.sort((before_el, after_el) => {
-			if (before_el.updatedAt) return -1;
-			else if (after_el.updatedAt) return 1;
-			else return 0;
-		});
+	);
+
 	return (
 		<SideBarStyles>
 			<UserBlock>
@@ -130,7 +123,7 @@ export const SideBar = observer(() => {
 					<Search setValue={setSearchValue} placeholder="Search" />
 				</div>
 			</UserBlock>
-			<Dialogs loaded={loaded} dialogsItems={filteredDialogs} />
+			<Dialogs dialogsItems={filteredDialogs} />
 			<SideMenu
 				menuBtnRef={menuBtn}
 				sideIsOpen={sideIsOpen}

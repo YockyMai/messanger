@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import socket from '../../core/socket';
 import messagesStore from '../../stores/messagesStore';
 import { EmojiPicker } from '../EmojiPicker';
+import TextareaAutosize from 'react-textarea-autosize';
 
 interface SendMessageProps {}
 
@@ -17,8 +18,8 @@ const SendMessageStyle = styled.div`
 		transition: 0.15s;
 	}
 	.input-div {
-		min-height: 40px;
-		max-height: 300px;
+		resize: none;
+		border: none;
 		width: 100%;
 		font-size: 18px;
 		padding: 5px 100px 5px 50px;
@@ -28,15 +29,6 @@ const SendMessageStyle = styled.div`
 		&:focus {
 			outline: none;
 		}
-		[contentEditable='true']:empty:not(:focus):before {
-			content: attr(data-text);
-		}
-		&:empty:before {
-			content: attr(data-placeholder);
-			color: gray;
-			cursor: text;
-		}
-
 		overflow: auto;
 		&::-webkit-scrollbar {
 			display: none;
@@ -125,47 +117,38 @@ const SendMessageStyle = styled.div`
 
 export const SendMessage: React.FC<SendMessageProps> = () => {
 	const [message, setMessage] = React.useState<string>('');
-	const [showSend, setShowSend] = React.useState(false);
-	const inputDiv = React.useRef<HTMLDivElement>(null);
 	const [emojiVisible, setEmojiVisible] = React.useState(false);
 	const [selectedFiles, setSelectedFiles] = React.useState<any>([]);
-
 	const [selectedEmoji, selectEmoji] = React.useState<any>([]);
 
-	React.useEffect(() => {
-		inputDiv && inputDiv.current && inputDiv.current.focus();
-	}, []);
-
-	const handleSetMessage = (e: any) => {
-		setMessage(e.currentTarget.textContent);
-		e.currentTarget.textContent != ''
-			? setShowSend(true)
-			: setShowSend(false);
-	};
-
-	const sendMessage = (e: KeyboardEvent | any) => {
+	const sendMessage = (e: KeyboardEvent) => {
 		if (e.shiftKey && e.keyCode === 13) {
-			console.log('перенос');
-		} else if (message?.length > 0 && e.keyCode === 13) {
-			console.log('отпрвка');
+		} else if (
+			message.replace(/\s{2,}/g, '').trim().length > 0 &&
+			e.keyCode === 13
+		) {
+			e.preventDefault();
 			messagesStore.sendMessage(message);
+			setMessage('');
+			return false;
 		}
 	};
 	return (
 		<SendMessageStyle>
-			<div
-				ref={inputDiv}
+			<TextareaAutosize
+				placeholder="Write a message..."
 				className="input-div"
-				data-placeholder="Write a message..."
-				contentEditable
-				role="textbox"
-				aria-multiline
-				onInput={e => {
-					handleSetMessage(e as any);
+				onChange={e => {
+					setMessage(e.target.value);
 				}}
+				minRows={1}
+				maxRows={10}
+				autoFocus
+				value={message}
 				onKeyDown={(e: any) => {
 					sendMessage(e);
-				}}></div>
+				}}
+			/>
 
 			{emojiVisible && (
 				<div className="picker">
@@ -215,8 +198,10 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 					</svg>
 				</span>
 
-				{showSend ? (
-					<span className="send">
+				{message.length > 0 ? (
+					<span
+						className="send"
+						onClick={() => messagesStore.sendMessage(message)}>
 						<svg
 							width="35"
 							height="35"

@@ -4,7 +4,7 @@ import { Avatar } from '../../Avatar';
 import emptyAvatar from '../../../assets/img/emptyAvatar.png';
 import { Time } from '../../Time';
 import { format, isThisYear, isToday, parseISO } from 'date-fns';
-import dialgosStore from '../../../stores/dialgosStore';
+import dialgosStore from '../../../stores/dialogsStore';
 import { observer } from 'mobx-react-lite';
 import { dialogsItem, User } from '../../../types';
 import messagesStore from '../../../stores/messagesStore';

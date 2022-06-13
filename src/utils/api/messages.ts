@@ -11,4 +11,7 @@ export default {
 			dialogID,
 		});
 	},
+	deleteOneMessage: (id: string) => {
+		return axios.delete(`/message/${id}`);
+	},
 };

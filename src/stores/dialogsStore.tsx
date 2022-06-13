@@ -1,13 +1,11 @@
-import { action, flow, makeObservable, observable } from 'mobx';
-import React from 'react';
+import { action, makeObservable, observable } from 'mobx';
 import { dialogsItem } from '../types';
 import { dialogs } from '../utils/api';
-import authStore from './authStore';
-import messagesStore from './messagesStore';
 
 class DialogsStore {
 	dialogues: dialogsItem[] = [];
 	currentDialog: dialogsItem | null = null;
+	dialogsIsLoaded: boolean = false;
 
 	constructor() {
 		makeObservable(this, {
@@ -20,14 +18,16 @@ class DialogsStore {
 	}
 
 	fetchDialogs() {
+		this.dialogsIsLoaded = true;
 		dialogs
 			.getAll()
 			.then(res => {
 				this.setDialogs(res.data);
-				console.log(res.data);
+				this.dialogsIsLoaded = false;
 			})
 			.catch(err => {
 				console.log(err);
+				this.dialogsIsLoaded = false;
 			});
 	}
 
@@ -35,7 +35,6 @@ class DialogsStore {
 		dialogs
 			.createDialog(partnerId, messageText)
 			.then(res => {
-				console.log(res);
 				this.addDialog(res.data.dialogs);
 				this.setCurrentDialog(res.data.dialogs);
 			})

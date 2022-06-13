@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { RouteNames } from '../router';
 import { observer } from 'mobx-react-lite';
 import { Loader } from '../components/UI/Loader';
+import dialogsStore from '../stores/dialogsStore';
 
 export const Login = observer(() => {
 	const [username, setUsername] = React.useState('');
@@ -116,6 +117,7 @@ export const Login = observer(() => {
 				.login(email, password)
 				.then(() => {
 					setIsLoading(false);
+					window.location.href = '/im';
 				})
 				.catch(() => {
 					setIsLoading(false);

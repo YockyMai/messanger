@@ -10,6 +10,8 @@ import messagesStore from '../../../stores/messagesStore';
 import { ContextMenu } from '../../UI/ContextMenu';
 import trashImg from '../../../assets/img/trash.svg';
 import { Time } from '../../Time';
+import { messages } from '../../../utils/api';
+import authStore from '../../../stores/authStore';
 
 const MessageStyles = styled.div<{ isMe: boolean }>`
 	display: flex;
@@ -39,6 +41,7 @@ const MessageStyles = styled.div<{ isMe: boolean }>`
 		background-color: ${props => (props.isMe ? '#393b5cb2' : '#1c1d2c')};
 		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 		max-width: 50%;
+
 		.checkedMsgImg {
 			margin-left: 8px;
 		}
@@ -91,6 +94,7 @@ interface MessageProps {
 	audio?: string;
 	index?: number;
 	user_id: string;
+	message_id: string;
 }
 
 export const Message: React.FC<MessageProps> = observer(
@@ -104,6 +108,7 @@ export const Message: React.FC<MessageProps> = observer(
 		audio,
 		index,
 		user_id,
+		message_id,
 	}) => {
 		const scrollTo = React.useRef<HTMLDivElement>(null);
 		const messageEl = React.useRef<HTMLDivElement | null>(null);
@@ -125,16 +130,23 @@ export const Message: React.FC<MessageProps> = observer(
 			});
 
 			scrollTo.current && scrollTo.current.scrollIntoView();
+
+			return () => {
+				document.body.removeEventListener('scroll', () => {});
+			};
 		}, []);
 
 		const openMsgContext = (e: MouseEvent) => {
 			e.preventDefault();
-			setContextIsOpen(true);
-			if (messageEl.current) {
-				let targetCoords = messageEl.current.getBoundingClientRect();
-				let xCoord = e.clientX - targetCoords.left;
-				let yCoord = e.clientY - targetCoords.top;
-				setContextCoords([xCoord, yCoord]);
+			if (user_id === authStore.user._id) {
+				setContextIsOpen(true);
+				if (messageEl.current) {
+					let targetCoords =
+						messageEl.current.getBoundingClientRect();
+					let xCoord = e.clientX - targetCoords.left;
+					let yCoord = e.clientY - targetCoords.top;
+					setContextCoords([xCoord, yCoord]);
+				}
 			}
 		};
 
@@ -144,6 +156,11 @@ export const Message: React.FC<MessageProps> = observer(
 		const [contextCoords, setContextCoords] = React.useState<
 			[coordsX: number, coordsY: number]
 		>([230, 230]);
+
+		const deleteMessage = () => {
+			messages.deleteOneMessage(message_id);
+			setContextIsOpen(false);
+		};
 
 		return (
 			<MessageStyles
@@ -163,6 +180,7 @@ export const Message: React.FC<MessageProps> = observer(
 					width="50px"
 					height="50px"
 				/>
+
 				{audio ? (
 					<div className="audio-box" ref={audio ? messageEl : null}>
 						<AudioMessage audio={audio} />
@@ -214,13 +232,12 @@ export const Message: React.FC<MessageProps> = observer(
 						className="file-box"
 						ref={!text ? messageEl : null}></div>
 				)}
-
 				<MessageContext
 					ref={msgContext}
 					xCoords={contextCoords[0]}
 					yCoords={contextCoords[1]}>
 					<ContextMenu isOpen={contextIsOpen}>
-						<li className="warning--action">
+						<li className="warning--action" onClick={deleteMessage}>
 							<img src={trashImg} alt="trash" />
 							<p>Delete ' {text} ' message</p>
 						</li>

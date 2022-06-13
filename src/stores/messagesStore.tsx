@@ -2,10 +2,11 @@ import axios from 'axios';
 import { action, flow, makeObservable, observable } from 'mobx';
 import { messageItem } from '../types';
 import { messages } from '../utils/api';
-import dialgosStore from './dialgosStore';
+import dialgosStore from './dialogsStore';
 
 class MessagesStore {
 	currentMessages: messageItem[] = [];
+	isLoaded: boolean = false;
 
 	constructor() {
 		makeObservable(this, {
@@ -17,6 +18,7 @@ class MessagesStore {
 	}
 
 	fetchMessages(_id: string) {
+		this.isLoaded = true;
 		messages
 			.getAllById(_id)
 			.then(res => {
@@ -24,7 +26,17 @@ class MessagesStore {
 			})
 			.catch(err => {
 				console.log(err);
+				this.isLoaded = false;
 			});
+	}
+
+	sendMessage(message: any) {
+		if (dialgosStore.currentDialog?._id)
+			messages
+				.createMessage(message, dialgosStore.currentDialog?._id)
+				.then(res => {
+					this.currentMessages.push(res.data);
+				});
 	}
 
 	handleNewMessage(message: any) {
@@ -35,20 +47,17 @@ class MessagesStore {
 
 	setMessages(dialogs: messageItem[]) {
 		this.currentMessages = dialogs;
+		this.isLoaded = false;
 	}
 
 	addMessage(message: any) {
 		this.currentMessages.push(message);
 	}
 
-	sendMessage(message: any) {
-		if (dialgosStore.currentDialog?._id)
-			messages
-				.createMessage(message, dialgosStore.currentDialog?._id)
-				.then(res => {
-					this.currentMessages.push(res.data);
-					console.log(res);
-				});
+	deleteMessage(messageId: any) {
+		this.currentMessages = this.currentMessages.filter(
+			el => el._id !== messageId,
+		);
 	}
 }
 

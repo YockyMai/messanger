@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx';
 
 import { User } from '../types';
 import auth from '../utils/api/auth';
-import dialgosStore from './dialgosStore';
+import dialogsStore from './dialogsStore';
 import messagesStore from './messagesStore';
 
 class AuthStore {
@@ -41,8 +41,8 @@ class AuthStore {
 	}
 
 	logOut() {
-		dialgosStore.dialogues = [];
-		dialgosStore.currentDialog = null;
+		dialogsStore.dialogues = [];
+		dialogsStore.currentDialog = null;
 		messagesStore.currentMessages = [];
 		localStorage.removeItem('token');
 		this.user = {};
@@ -53,11 +53,12 @@ class AuthStore {
 		this.errorMessage = err;
 	}
 
-	async getUser() {
-		const { data } = await auth.getUser();
-		if (data.email) {
-			this.setUser(data);
-		}
+	getUser() {
+		auth.getUser().then(({ data }) => {
+			if (data.email) {
+				this.setUser(data);
+			}
+		});
 	}
 }
 
