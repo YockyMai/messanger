@@ -37,7 +37,6 @@ class AuthStore {
 		} else {
 			localStorage.setItem('token', data.token);
 			this.setUser(data.user);
-			window.location.href = '/';
 		}
 	}
 

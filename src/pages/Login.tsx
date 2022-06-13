@@ -117,6 +117,7 @@ export const Login = observer(() => {
 				.login(email, password)
 				.then(() => {
 					setIsLoading(false);
+					navigate(RouteNames.IM);
 				})
 				.catch(() => {
 					setIsLoading(false);

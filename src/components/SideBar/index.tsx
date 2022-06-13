@@ -101,7 +101,7 @@ export const SideBar = observer(() => {
 			}
 		});
 	}, [authStore.isAuth]);
-	const filteredDialogs = dialogsStore.dialogues.filter(
+	let filteredDialogs = dialogsStore.dialogues.filter(
 		item =>
 			item.partner.fullname
 				.toLowerCase()
@@ -110,6 +110,9 @@ export const SideBar = observer(() => {
 				.toLowerCase()
 				.includes(searchValue.toLowerCase()),
 	);
+
+	console.log(filteredDialogs);
+	console.log(dialogsStore.dialogues);
 
 	return (
 		<SideBarStyles>

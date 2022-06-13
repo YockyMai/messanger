@@ -85,7 +85,7 @@ export const Dialogs: React.FC<DialogsProps> = observer(({ dialogsItems }) => {
 								/>
 							</svg>
 
-							<p>'No matches found'</p>
+							<p>No matches found</p>
 						</>
 					)}
 				</NoMatchesFound>

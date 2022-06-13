@@ -3,6 +3,7 @@ import { SideBar } from '../components/SideBar';
 import { ChatBar } from '../components/ChatBar';
 import styled from 'styled-components';
 import { ViewImage } from '../components/ViewImage';
+import dialogsStore from '../stores/dialogsStore';
 
 const MainPage = styled.div`
 	display: grid;
