@@ -59,6 +59,10 @@ class MessagesStore {
 			el => el._id !== messageId,
 		);
 	}
+
+	updateMessage(index: number, updatedMessage: messageItem) {
+		this.currentMessages[index] = updatedMessage;
+	}
 }
 
 export default new MessagesStore();

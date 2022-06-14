@@ -22,9 +22,11 @@ export interface messageItem {
 	text: string;
 	attachments: [] | null;
 	createdAt: string;
+	updatedAt: string;
 	user: User;
 	audio?: string;
 	dialogs: string;
+	updated?: boolean;
 }
 
 export interface User {

@@ -111,9 +111,6 @@ export const SideBar = observer(() => {
 				.includes(searchValue.toLowerCase()),
 	);
 
-	console.log(filteredDialogs);
-	console.log(dialogsStore.dialogues);
-
 	return (
 		<SideBarStyles>
 			<UserBlock>

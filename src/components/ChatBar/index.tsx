@@ -71,6 +71,23 @@ export const ChatBar = observer(() => {
 					messagesStore.deleteMessage(message._id);
 				}
 			});
+
+		socket
+			.off('SERVER:UPDATE_MESSAGE')
+			.on('SERVER:UPDATE_MESSAGE', message => {
+				if (message.dialog._id === dialgosStore.currentDialog?._id) {
+					let iterationIndex = 0;
+					let msgIndex = 0;
+					messagesStore.currentMessages.forEach(el => {
+						if (el._id === message._id) {
+							msgIndex = iterationIndex;
+						} else {
+							iterationIndex = iterationIndex + 1;
+						}
+					});
+					messagesStore.updateMessage(msgIndex, message);
+				}
+			});
 	});
 
 	React.useEffect(() => {
@@ -114,9 +131,10 @@ export const ChatBar = observer(() => {
 									index={index}
 									text={el.text}
 									date={el.createdAt}
-									user_id={el.user._id}
-									fullname={el.user.fullname}
+									updatedAt={el.updatedAt}
+									user={el.user}
 									message_id={el._id}
+									updated={el.updated}
 								/>
 							))}
 						</>

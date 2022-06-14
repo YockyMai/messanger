@@ -9,9 +9,12 @@ import { observer } from 'mobx-react-lite';
 import messagesStore from '../../../stores/messagesStore';
 import { ContextMenu } from '../../UI/ContextMenu';
 import trashImg from '../../../assets/img/trash.svg';
+import editImg from '../../../assets/img/corondash.svg';
 import { Time } from '../../Time';
 import { messages } from '../../../utils/api';
 import authStore from '../../../stores/authStore';
+import { User } from '../../../types';
+import convertDbDate from '../../../utils/helpers/convertDbDate';
 
 const MessageStyles = styled.div<{ isMe: boolean }>`
 	display: flex;
@@ -23,6 +26,13 @@ const MessageStyles = styled.div<{ isMe: boolean }>`
 		}
 	}
 	margin-bottom: 15px;
+
+	.editable__message {
+		color: #b3afb6;
+		font-weight: 200;
+		float: right;
+	}
+
 	.audio-box {
 		margin-left: 10px;
 		span {
@@ -41,6 +51,30 @@ const MessageStyles = styled.div<{ isMe: boolean }>`
 		background-color: ${props => (props.isMe ? '#393b5cb2' : '#1c1d2c')};
 		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 		max-width: 50%;
+
+		.message__header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			p {
+				margin-left: 30px;
+				color: #dfdfdf;
+				font-size: 12px;
+				font-weight: 200;
+			}
+		}
+
+		.message-content {
+			p {
+				border: none;
+				&:focus {
+					border: none;
+					outline: 1px solid #1c1d2c;
+					border-radius: 0.3em;
+				}
+				word-break: break-word;
+			}
+		}
 
 		.checkedMsgImg {
 			margin-left: 8px;
@@ -85,7 +119,6 @@ const MessageContext = styled.div<{ xCoords: number; yCoords: number }>`
 `;
 
 interface MessageProps {
-	fullname: string;
 	text?: string | undefined;
 	date: string;
 	isMe?: boolean;
@@ -93,13 +126,14 @@ interface MessageProps {
 	attachments?: object[] | undefined;
 	audio?: string;
 	index?: number;
-	user_id: string;
+	user: User;
 	message_id: string;
+	updatedAt: string;
+	updated?: boolean;
 }
 
 export const Message: React.FC<MessageProps> = observer(
 	({
-		fullname,
 		text,
 		date,
 		isMe,
@@ -107,12 +141,24 @@ export const Message: React.FC<MessageProps> = observer(
 		attachments,
 		audio,
 		index,
-		user_id,
+		user,
 		message_id,
+		updated,
+		updatedAt,
 	}) => {
 		const scrollTo = React.useRef<HTMLDivElement>(null);
 		const messageEl = React.useRef<HTMLDivElement | null>(null);
 		const msgContext = React.useRef<HTMLDivElement | null>(null);
+		const msgText = React.useRef<HTMLParagraphElement | null>(null);
+
+		const [isEditMessage, setEditMessage] = React.useState(false);
+		const [textEditableMessage, setTextEditableMessage] =
+			React.useState('');
+
+		const [contextIsOpen, setContextIsOpen] = React.useState(false);
+		const [contextCoords, setContextCoords] = React.useState<
+			[coordsX: number, coordsY: number]
+		>([230, 230]);
 
 		React.useEffect(() => {
 			document.body.addEventListener('click', (e: any) => {
@@ -120,6 +166,8 @@ export const Message: React.FC<MessageProps> = observer(
 					setContextIsOpen(false);
 				}
 			});
+
+			document.body.addEventListener('click', enableEditMsg);
 
 			document.body.addEventListener('contextmenu', (e: any) => {
 				//TODO: fix multiply contexts in msg
@@ -130,11 +178,33 @@ export const Message: React.FC<MessageProps> = observer(
 			});
 
 			scrollTo.current && scrollTo.current.scrollIntoView();
+
+			return () => {
+				document.body.removeEventListener('click', enableEditMsg);
+			};
 		}, []);
+
+		React.useEffect(() => {
+			if (msgText.current && isEditMessage) {
+				msgText.current.focus();
+				const range = document.createRange();
+				const sel = window.getSelection();
+
+				range.setStart(
+					msgText.current.childNodes[0],
+					msgText.current.innerText.length,
+				);
+
+				console.log(msgText.current.children.length);
+				range.collapse(true);
+				sel && sel.removeAllRanges();
+				sel && sel.addRange(range);
+			}
+		}, [isEditMessage]);
 
 		const openMsgContext = (e: MouseEvent) => {
 			e.preventDefault();
-			if (user_id === authStore.user._id) {
+			if (user._id === authStore.user._id) {
 				setContextIsOpen(true);
 				if (messageEl.current) {
 					let targetCoords =
@@ -146,16 +216,39 @@ export const Message: React.FC<MessageProps> = observer(
 			}
 		};
 
+		const enableEditMsg = (e: any) => {
+			if (
+				!e.path.includes(msgText.current) &&
+				!e.path.includes(msgContext.current)
+			) {
+				setEditMessage(false);
+			}
+		};
+
 		// const closeContext = (e: MouseEvent) => {};
 
-		const [contextIsOpen, setContextIsOpen] = React.useState(false);
-		const [contextCoords, setContextCoords] = React.useState<
-			[coordsX: number, coordsY: number]
-		>([230, 230]);
-
 		const deleteMessage = () => {
+			setContextIsOpen(false);
 			messages.deleteOneMessage(message_id);
 			setContextIsOpen(false);
+		};
+
+		const editMessage = () => {
+			setEditMessage(true);
+			setContextIsOpen(false);
+		};
+
+		const sendEditableMessage = (e: KeyboardEvent) => {
+			if (
+				e.keyCode === 13 &&
+				textEditableMessage.length > 0 &&
+				!e.shiftKey
+			) {
+				textEditableMessage !== '' &&
+					messages.updateOneMessage(message_id, textEditableMessage);
+
+				setEditMessage(false);
+			}
 		};
 
 		return (
@@ -170,9 +263,9 @@ export const Message: React.FC<MessageProps> = observer(
 				}
 				isMe={isMe ? isMe : false}>
 				<Avatar
-					fullname={fullname}
-					user_id={user_id}
-					src="https://avatars.githubusercontent.com/u/75245399?v=4"
+					fullname={user.fullname}
+					user_id={user._id}
+					src={user.avatar && user.avatar}
 					width="50px"
 					height="50px"
 				/>
@@ -191,11 +284,35 @@ export const Message: React.FC<MessageProps> = observer(
 					</div>
 				) : text ? (
 					<div className="message-box" ref={text ? messageEl : null}>
-						<a href="#">
-							<h4>{isMe ? 'You' : fullname}</h4>
-						</a>
+						<div className="message__header">
+							<a href="#">
+								<h4>{isMe ? 'You' : user.fullname}</h4>
+							</a>
+							<p>
+								{updated &&
+									`updated at ${convertDbDate(updatedAt)}`}
+							</p>
+						</div>
+
 						<div className="message-content">
-							{text && <p>{text}</p>}
+							{text && (
+								<p
+									ref={msgText}
+									contentEditable={
+										isEditMessage ? true : false
+									}
+									onInput={e => {
+										setTextEditableMessage(
+											e.currentTarget
+												.textContent as string,
+										);
+									}}
+									onKeyDown={e => {
+										sendEditableMessage(e as any);
+									}}>
+									{text}
+								</p>
+							)}
 							<div className={attachments && 'attachments'}>
 								{attachments &&
 									attachments.map((el: any, index) => (
@@ -214,7 +331,7 @@ export const Message: React.FC<MessageProps> = observer(
 						</div>
 						<div className="message-info">
 							<span>
-								<Time time={date} />
+								<Time time={convertDbDate(date)} />
 							</span>
 							<img
 								src={isReaded ? messageRead : messageUnread}
@@ -233,9 +350,13 @@ export const Message: React.FC<MessageProps> = observer(
 					xCoords={contextCoords[0]}
 					yCoords={contextCoords[1]}>
 					<ContextMenu isOpen={contextIsOpen}>
+						<li onClick={editMessage}>
+							<img src={editImg} alt="trash" />
+							<p>Edit message</p>
+						</li>
 						<li className="warning--action" onClick={deleteMessage}>
 							<img src={trashImg} alt="trash" />
-							<p>Delete ' {text} ' message</p>
+							<p>Delete message</p>
 						</li>
 					</ContextMenu>
 				</MessageContext>

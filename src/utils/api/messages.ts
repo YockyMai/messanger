@@ -14,4 +14,10 @@ export default {
 	deleteOneMessage: (id: string) => {
 		return axios.delete(`/message/${id}`);
 	},
+	updateOneMessage: (id: string, text: string) => {
+		return axios.post('/messageupdate', {
+			id,
+			text,
+		});
+	},
 };
