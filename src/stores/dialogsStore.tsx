@@ -1,5 +1,5 @@
 import { action, makeObservable, observable } from 'mobx';
-import { dialogsItem } from '../types';
+import { dialogsItem, messageItem } from '../types';
 import { dialogs } from '../utils/api';
 
 class DialogsStore {
@@ -24,6 +24,7 @@ class DialogsStore {
 			.then(res => {
 				this.setDialogs(res.data);
 				this.dialogsIsLoaded = false;
+				console.log(res.data);
 			})
 			.catch(err => {
 				console.log(err);
@@ -53,7 +54,20 @@ class DialogsStore {
 
 	setCurrentDialog(dialog: dialogsItem) {
 		this.currentDialog = dialog;
-		// messagesStore.fetchMessages(dialog._id);
+	}
+
+	updateLastMessage(dialog: dialogsItem, lastMessage?: messageItem) {
+		let dialogKey = null;
+
+		this.dialogues.forEach((el, index) => {
+			if (el._id === dialog._id) {
+				dialogKey = index;
+			}
+		});
+		if (lastMessage) {
+			if (dialogKey !== null)
+				this.dialogues[dialogKey].lastMessage = lastMessage;
+		}
 	}
 }
 

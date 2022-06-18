@@ -27,6 +27,7 @@ const DefaultAvatar = styled.div<{ gradient: string }>`
 		left: 50%;
 		top: 50%;
 		transform: translate(-53%, -50%);
+		color: #fff !important;
 	}
 `;
 

@@ -10,6 +10,8 @@ import authStore from '../../stores/authStore';
 import socket from '../../core/socket';
 import playNotice from '../../utils/helpers/playNotice';
 import { Loader } from '../UI/Loader';
+import { dialogsItem, messageItem } from '../../types';
+import dialogsStore from '../../stores/dialogsStore';
 
 const ChatBarStyles = styled.div`
 	height: 100%;
@@ -43,32 +45,56 @@ const MessageInfo = styled.div`
 	}
 `;
 
+interface newMessageSocket {
+	message: messageItem;
+	dialog: dialogsItem;
+}
+interface deletedMessageSocket {
+	message: any;
+	lastMsg: messageItem[];
+}
+
 export const ChatBar = observer(() => {
 	const [searchValue, setSearchValue] = React.useState('');
 
 	React.useEffect(() => {
-		socket.off('SERVER:NEW_MESSAGE').on('SERVER:NEW_MESSAGE', message => {
-			if (message.user._id !== authStore.user._id) {
-				messagesStore.handleNewMessage(message);
-				const dialogues = dialgosStore.dialogues;
-				let isNewMsg = false;
-				dialogues.forEach(dialog => {
+		socket
+			.off('SERVER:NEW_MESSAGE')
+			.on('SERVER:NEW_MESSAGE', (obj: newMessageSocket) => {
+				dialgosStore.updateLastMessage(obj.dialog, obj.message);
+				if (obj.message.user._id !== authStore.user._id) {
+					messagesStore.handleNewMessage(obj.message);
+					const dialogues = dialgosStore.dialogues;
+					let isNewMsg = false;
+					dialogues.forEach(dialog => {
+						if (
+							dialog._id === obj.message.dialog._id &&
+							obj.message.dialog._id !==
+								dialgosStore.currentDialog?._id
+						)
+							isNewMsg = true;
+					});
 					if (
-						dialog._id === message.dialog._id &&
-						message.dialog._id !== dialgosStore.currentDialog?._id
-					)
-						isNewMsg = true;
-				});
-				if (isNewMsg && message.user._id !== authStore.user._id) {
-					playNotice();
+						isNewMsg &&
+						obj.message.user._id !== authStore.user._id
+					) {
+						playNotice();
+					}
 				}
-			}
-		});
+			});
 		socket
 			.off('SERVER:DELETE_MESSAGE')
-			.on('SERVER:DELETE_MESSAGE', message => {
-				if (message.dialog === dialgosStore.currentDialog?._id) {
-					messagesStore.deleteMessage(message._id);
+			.on('SERVER:DELETE_MESSAGE', (obj: deletedMessageSocket) => {
+				console.log(obj);
+				if (obj.lastMsg)
+					dialgosStore.updateLastMessage(
+						obj.lastMsg[0].dialog,
+						obj.lastMsg[0],
+					);
+				else dialgosStore.updateLastMessage(obj.message);
+
+				if (obj.message.dialog === dialgosStore.currentDialog?._id) {
+					messagesStore.deleteMessage(obj.message._id);
 				}
 			});
 

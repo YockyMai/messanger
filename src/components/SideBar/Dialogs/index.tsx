@@ -62,6 +62,7 @@ export const Dialogs: React.FC<DialogsProps> = observer(({ dialogsItems }) => {
 							updatedAt={obj.updatedAt}
 							// message={obj.message}
 							unreaded={1}
+							lastMessage={obj.lastMessage}
 						/>
 					))}
 				</>

@@ -6,7 +6,7 @@ import { Time } from '../../Time';
 import { format, isThisYear, isToday, parseISO } from 'date-fns';
 import dialgosStore from '../../../stores/dialogsStore';
 import { observer } from 'mobx-react-lite';
-import { dialogsItem, User } from '../../../types';
+import { dialogsItem, messageItem, User } from '../../../types';
 import messagesStore from '../../../stores/messagesStore';
 import { Link, useLocation } from 'react-router-dom';
 import authStore from '../../../stores/authStore';
@@ -65,6 +65,8 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 			max-width: 330px;
 			.dialog-title {
 				font-weight: 400;
+				color: ${props =>
+					props._id == props.selectedId && '#fff !important'};
 			}
 			.dialogs-message {
 				font-size: 16px;
@@ -114,6 +116,7 @@ interface DialogProps {
 	_id: string;
 	updatedAt: string;
 	unreaded: number;
+	lastMessage?: messageItem;
 }
 
 export const DialogItem: React.FC<DialogProps> = observer(
@@ -122,10 +125,10 @@ export const DialogItem: React.FC<DialogProps> = observer(
 		setOnSelect,
 		_id,
 		unreaded,
-		message,
 		author,
 		createdAt,
 		updatedAt,
+		lastMessage,
 	}) => {
 		// const pathLocation = useLocation();
 		// const dialogId = pathLocation.pathname.replace('/im/', '');
@@ -153,6 +156,7 @@ export const DialogItem: React.FC<DialogProps> = observer(
 						partner,
 						createdAt,
 						updatedAt,
+						lastMessage,
 					});
 					messagesStore.fetchMessages(_id);
 				}}>
@@ -172,13 +176,19 @@ export const DialogItem: React.FC<DialogProps> = observer(
 								{dialogPartner.fullname}
 							</h4>
 							<p className="dialogs-message">
-								{message
-									? message
+								{lastMessage
+									? lastMessage.text
 									: 'Write your first message...'}
 							</p>
 						</div>
 						<div className="dialog-other">
-							<Time time={getMessageTime(updatedAt)} />
+							<Time
+								time={getMessageTime(
+									lastMessage
+										? lastMessage.createdAt
+										: updatedAt,
+								)}
+							/>
 							{unreaded > 0 && (
 								<div className="unreaded-messages">
 									{unreaded > 0 && (

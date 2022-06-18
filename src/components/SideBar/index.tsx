@@ -101,15 +101,26 @@ export const SideBar = observer(() => {
 			}
 		});
 	}, [authStore.isAuth]);
-	let filteredDialogs = dialogsStore.dialogues.filter(
-		item =>
-			item.partner.fullname
-				.toLowerCase()
-				.includes(searchValue.toLowerCase()) ||
-			item.author.fullname
-				.toLowerCase()
-				.includes(searchValue.toLowerCase()),
-	);
+	let filteredDialogs = dialogsStore.dialogues
+		.filter(
+			item =>
+				item.partner.fullname
+					.toLowerCase()
+					.includes(searchValue.toLowerCase()) ||
+				item.author.fullname
+					.toLowerCase()
+					.includes(searchValue.toLowerCase()),
+		)
+		.sort((prevEl, currentEl) => {
+			if (prevEl.lastMessage && currentEl.lastMessage)
+				if (
+					prevEl.lastMessage?.createdAt >
+					currentEl.lastMessage?.createdAt
+				)
+					return -1;
+				else return 1;
+			else return -1;
+		});
 
 	return (
 		<SideBarStyles>

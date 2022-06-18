@@ -5,7 +5,7 @@ export interface dialogsItem {
 	partner: User;
 	createdAt: string;
 	updatedAt: string;
-
+	lastMessage?: messageItem;
 	// message: {
 	// 	user: {
 	// 		_id: string;
@@ -25,7 +25,7 @@ export interface messageItem {
 	updatedAt: string;
 	user: User;
 	audio?: string;
-	dialogs: string;
+	dialog: dialogsItem;
 	updated?: boolean;
 }
 
