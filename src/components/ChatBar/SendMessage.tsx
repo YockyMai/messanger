@@ -4,6 +4,7 @@ import socket from '../../core/socket';
 import messagesStore from '../../stores/messagesStore';
 import { EmojiPicker } from '../EmojiPicker';
 import TextareaAutosize from 'react-textarea-autosize';
+import { CSSTransition } from 'react-transition-group';
 
 interface SendMessageProps {}
 
@@ -14,6 +15,7 @@ const SendMessageStyle = styled.div`
 	bottom: 0;
 	width: 75%;
 	background-color: #1c1d2c;
+
 	path {
 		transition: 0.15s;
 	}
@@ -36,8 +38,44 @@ const SendMessageStyle = styled.div`
 	}
 	.picker {
 		position: absolute;
-		right: 50px;
+		right: 0px;
+		transform: translateX(100%);
 		bottom: 50px;
+		opacity: 0;
+
+		&-enter {
+			opacity: 0;
+			transform: scale(1, -1);
+			right: 0px;
+			transform: translateX(100%);
+		}
+		&-enter-active {
+			opacity: 1;
+			transition: 200ms;
+			transform: scale(1, 1);
+			right: 50px;
+		}
+		&-enter-done {
+			opacity: 1;
+			right: 50px;
+			transform: none;
+		}
+		&-exit {
+			opacity: 1;
+			transform: scale(1, 1);
+			right: 50px;
+		}
+		&-exit-active {
+			opacity: 0;
+			transition: 200ms;
+			transform: scale(1, -1);
+			right: 0px;
+			transform: translateX(100%);
+		}
+		&-exit-done {
+			display: none;
+			opacity: 0;
+		}
 	}
 	.input-actions {
 		span {
@@ -113,6 +151,48 @@ const SendMessageStyle = styled.div`
 			right: 5px;
 		}
 	}
+
+	.charactersLeft {
+		position: absolute;
+		left: 45px;
+		top: -40px;
+		display: flex;
+		padding: 5px 10px;
+		border-radius: 0.3em;
+		background-color: #1c1d2c;
+		align-items: center;
+		p {
+			font-size: 13px;
+			font-weight: 200;
+		}
+		span {
+			font-size: 14px;
+			margin-left: 5px;
+			color: #e66868;
+		}
+		&-enter {
+			opacity: 0;
+			top: 0px;
+			transform: scale(-1, 0);
+		}
+		&-enter-active {
+			opacity: 1;
+			top: -40px;
+			transition: 200ms;
+			transform: scale(1, 1);
+		}
+		&-exit {
+			opacity: 1;
+			transform: scale(1, 1);
+			top: -40px;
+		}
+		&-exit-active {
+			opacity: 0;
+			transition: 200ms;
+			transform: scale(-1, 0);
+			top: 0px;
+		}
+	}
 `;
 
 export const SendMessage: React.FC<SendMessageProps> = () => {
@@ -121,17 +201,32 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 	const [selectedFiles, setSelectedFiles] = React.useState<any>([]);
 	const [selectedEmoji, selectEmoji] = React.useState<any>([]);
 
-	const sendMessage = (e: KeyboardEvent) => {
-		if (e.shiftKey && e.keyCode === 13) {
-		} else if (
-			message.replace(/\s{2,}/g, '').trim().length > 0 &&
-			e.keyCode === 13
-		) {
-			e.preventDefault();
+	const emojiPicker = React.useRef<HTMLDivElement | null>(null);
+	const emojiOpenIcon = React.useRef<SVGSVGElement | null>(null);
+
+	const sendMessage = (e?: KeyboardEvent) => {
+		if (e) {
+			if (e.shiftKey && e.keyCode === 13) {
+			} else if (
+				message.replace(/\s{2,}/g, '').trim().length > 0 &&
+				e.keyCode === 13
+			) {
+				e.preventDefault();
+				messagesStore.sendMessage(message);
+				setMessage('');
+				setEmojiVisible(false);
+				return false;
+			}
+		} else {
 			messagesStore.sendMessage(message);
 			setMessage('');
+			setEmojiVisible(false);
 			return false;
 		}
+	};
+
+	const onEmojiClick = (event: any, emojiObject: any) => {
+		setMessage(message + emojiObject.emoji);
 	};
 	return (
 		<SendMessageStyle>
@@ -148,13 +243,26 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 				onKeyDown={(e: any) => {
 					sendMessage(e);
 				}}
+				maxLength={2000}
 			/>
 
-			{emojiVisible && (
-				<div className="picker">
-					<EmojiPicker />
+			<CSSTransition
+				in={message.length > 0}
+				timeout={1000}
+				classNames="charactersLeft"
+				unmountOnExit
+				mountOnEnter>
+				<div className="charactersLeft">
+					<p>characters left</p>
+					<span className="">{2000 - message.length}</span>
 				</div>
-			)}
+			</CSSTransition>
+			<CSSTransition in={emojiVisible} timeout={200} classNames="picker">
+				<div className="picker" ref={emojiPicker}>
+					<EmojiPicker onEmojiClick={onEmojiClick} />
+				</div>
+			</CSSTransition>
+
 			<div className="input-actions">
 				<span className="attach">
 					<input
@@ -182,6 +290,7 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 						onClick={() => {
 							setEmojiVisible(!emojiVisible);
 						}}
+						ref={emojiOpenIcon}
 						width="32"
 						height="32"
 						viewBox="0 0 32 32"
@@ -199,9 +308,7 @@ export const SendMessage: React.FC<SendMessageProps> = () => {
 				</span>
 
 				{message.length > 0 ? (
-					<span
-						className="send"
-						onClick={() => messagesStore.sendMessage(message)}>
+					<span className="send" onClick={() => sendMessage()}>
 						<svg
 							width="35"
 							height="35"

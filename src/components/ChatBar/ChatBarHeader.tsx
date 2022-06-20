@@ -12,6 +12,7 @@ import closeImg from '../../assets/img/x-non-v1.svg';
 import { popupMounted, popupUnmunted } from '../../animation';
 import { CSSTransition } from 'react-transition-group';
 import authStore from '../../stores/authStore';
+import { Emoji } from 'emoji-mart';
 
 const ChatBarHeaderStyles = styled.div`
 	z-index: 1;

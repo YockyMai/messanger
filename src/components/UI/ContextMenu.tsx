@@ -63,8 +63,6 @@ interface ContextProps {
 }
 
 export const ContextMenu: React.FC<ContextProps> = ({ children, isOpen }) => {
-	// const [isOpen, setIsOpen] = React.useState(true);
-
 	return (
 		<div>
 			<CSSTransition

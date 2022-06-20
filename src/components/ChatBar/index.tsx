@@ -114,7 +114,7 @@ export const ChatBar = observer(() => {
 					messagesStore.updateMessage(msgIndex, message);
 				}
 			});
-	});
+	}, []);
 
 	React.useEffect(() => {
 		dialgosStore.currentDialog?._id &&

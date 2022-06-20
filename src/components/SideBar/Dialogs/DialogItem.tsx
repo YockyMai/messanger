@@ -73,6 +73,7 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 				font-weight: 200;
 				color: #d6d6d6;
 				white-space: nowrap;
+				max-width: 70%;
 				text-overflow: ellipsis;
 				overflow: hidden;
 			}

@@ -30,11 +30,11 @@ const PickerStyle = styled.div`
 	}
 `;
 
-interface IEmojiPicker {}
+interface IEmojiPicker {
+	onEmojiClick: (event: any, emojiObject: any) => void;
+}
 
-export const EmojiPicker: React.FC<IEmojiPicker> = ({}) => {
-	const onEmojiClick = (event: any, emojiObject: any) => {};
-
+export const EmojiPicker: React.FC<IEmojiPicker> = ({ onEmojiClick }) => {
 	useEffect(() => {}, []);
 
 	return (
