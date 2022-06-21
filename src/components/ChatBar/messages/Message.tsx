@@ -122,7 +122,7 @@ interface MessageProps {
 	text?: string | undefined;
 	date: string;
 	isMe?: boolean;
-	isReaded?: boolean;
+	isReaded: boolean;
 	attachments?: object[] | undefined;
 	audio?: string;
 	index?: number;

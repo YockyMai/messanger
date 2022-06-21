@@ -27,6 +27,7 @@ export interface messageItem {
 	audio?: string;
 	dialog: dialogsItem;
 	updated?: boolean;
+	unread: boolean;
 }
 
 export interface User {

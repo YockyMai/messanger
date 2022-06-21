@@ -16,6 +16,7 @@ const SideBarStyles = styled.div`
 	position: sticky;
 	height: 100vh;
 	top: 0;
+	max-width: 480px;
 `;
 
 const UserBlock = styled.div`

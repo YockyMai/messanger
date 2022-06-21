@@ -114,6 +114,19 @@ export const ChatBar = observer(() => {
 					messagesStore.updateMessage(msgIndex, message);
 				}
 			});
+
+		socket
+			.off('SERVER:MESSAGES_READED')
+			.on('SERVER:MESSAGES_READED', msgData => {
+				console.log(msgData.dialogId);
+				console.log(authStore.user._id);
+				if (
+					dialogsStore.currentDialog?._id === msgData.dialogId &&
+					authStore.user._id !== msgData.userId
+				) {
+					messagesStore.updateUnreadStatus();
+				}
+			});
 	}, []);
 
 	React.useEffect(() => {
@@ -161,6 +174,7 @@ export const ChatBar = observer(() => {
 									user={el.user}
 									message_id={el._id}
 									updated={el.updated}
+									isReaded={el.unread}
 								/>
 							))}
 						</>

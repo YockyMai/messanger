@@ -2,6 +2,7 @@ import axios from 'axios';
 import { action, flow, makeObservable, observable } from 'mobx';
 import { messageItem } from '../types';
 import { messages } from '../utils/api';
+import authStore from './authStore';
 import dialgosStore from './dialogsStore';
 
 class MessagesStore {
@@ -62,6 +63,13 @@ class MessagesStore {
 
 	updateMessage(index: number, updatedMessage: messageItem) {
 		this.currentMessages[index] = updatedMessage;
+	}
+
+	updateUnreadStatus() {
+		this.currentMessages.forEach(msg => {
+			if (msg.unread === false || msg.user._id !== authStore.user._id)
+				msg.unread = true;
+		});
 	}
 }
 
