@@ -63,6 +63,7 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 		align-items: center;
 		.dialog-info {
 			max-width: 330px;
+			position: relative;
 			.dialog-title {
 				font-weight: 400;
 				color: ${props =>
@@ -72,8 +73,7 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 				font-size: 16px;
 				font-weight: 200;
 				color: #d6d6d6;
-				white-space: nowrap;
-				max-width: 70%;
+				width: 100%;
 				text-overflow: ellipsis;
 				overflow: hidden;
 			}
@@ -83,25 +83,22 @@ const DialogsStyles = styled.div<DialgosStylesProps>`
 			display: flex;
 			align-items: center;
 
-			.unreaded-messages {
-				text-align: right;
-				font-size: 14px;
-				font-weight: 200;
-				margin-top: 3px;
-			}
-
-			.unreaded-messages {
-				background-color: #171823;
-				border-radius: 1em;
-				color: #ffffffdc;
-				max-width: 62px;
+			.unreaded-message {
+				background-color: #404583;
+				border-radius: 50%;
+				width: 10px;
+				height: 10px;
 				float: right;
-				padding: 3px 10px 3px 10px;
 				margin-left: 10px;
-				p {
-					overflow: hidden;
-					text-align: center;
-					text-overflow: ellipsis;
+				animation: 1s pourСolor infinite alternate;
+			}
+			@keyframes pourСolor {
+				from {
+					background-color: #404583;
+				}
+
+				to {
+					background-color: #7d82c4;
 				}
 			}
 		}
@@ -116,7 +113,7 @@ interface DialogProps {
 	createdAt: string;
 	_id: string;
 	updatedAt: string;
-	unreaded: number;
+	unreaded: boolean;
 	lastMessage?: messageItem;
 }
 
@@ -190,17 +187,7 @@ export const DialogItem: React.FC<DialogProps> = observer(
 										: updatedAt,
 								)}
 							/>
-							{unreaded > 0 && (
-								<div className="unreaded-messages">
-									{unreaded > 0 && (
-										<p>
-											{unreaded > 99999
-												? '+99999'
-												: unreaded}
-										</p>
-									)}
-								</div>
-							)}
+							{unreaded && <span className="unreaded-message" />}
 						</div>
 					</div>
 				</Link>

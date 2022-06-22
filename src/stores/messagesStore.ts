@@ -65,10 +65,15 @@ class MessagesStore {
 		this.currentMessages[index] = updatedMessage;
 	}
 
-	updateUnreadStatus() {
+	updateUnreadStatus(dialogId: string) {
 		this.currentMessages.forEach(msg => {
 			if (msg.unread === false || msg.user._id !== authStore.user._id)
 				msg.unread = true;
+		});
+		dialgosStore.dialogues.forEach(el => {
+			if (el._id === dialogId && el.lastMessage) {
+				el.lastMessage!.unread = false;
+			}
 		});
 	}
 }

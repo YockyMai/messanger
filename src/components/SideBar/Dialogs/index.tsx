@@ -13,7 +13,8 @@ import { Button } from '../../Button';
 
 const DilagosStyles = styled.div`
 	overflow-y: auto;
-	max-height: 90%;
+	height: 90%;
+	padding-bottom: 5px;
 	background-color: #1c1d2c;
 `;
 
@@ -47,6 +48,8 @@ export const Dialogs: React.FC<DialogsProps> = observer(({ dialogsItems }) => {
 		dialgosStore.setCurrentDialog(dialogItem);
 	};
 
+	console.log(dialgosStore.dialogues);
+
 	return (
 		<DilagosStyles>
 			{dialogsItems.length > 0 ? (
@@ -61,7 +64,13 @@ export const Dialogs: React.FC<DialogsProps> = observer(({ dialogsItems }) => {
 							createdAt={obj.createdAt}
 							updatedAt={obj.updatedAt}
 							// message={obj.message}
-							unreaded={1}
+							unreaded={
+								obj.lastMessage?.user === authStore.user._id
+									? false
+									: obj.lastMessage?.unread !== undefined
+									? !obj.lastMessage?.unread
+									: false
+							} //TODO: додлеать значок увомендовления
 							lastMessage={obj.lastMessage}
 						/>
 					))}

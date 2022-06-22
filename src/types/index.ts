@@ -1,11 +1,12 @@
 export interface dialogsItem {
 	_id: string;
-	unreaded: number;
+	unreaded: boolean;
 	author: User;
 	partner: User;
 	createdAt: string;
 	updatedAt: string;
 	lastMessage?: messageItem;
+	pinned?: boolean;
 	// message: {
 	// 	user: {
 	// 		_id: string;

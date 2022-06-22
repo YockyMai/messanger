@@ -85,7 +85,6 @@ export const ChatBar = observer(() => {
 		socket
 			.off('SERVER:DELETE_MESSAGE')
 			.on('SERVER:DELETE_MESSAGE', (obj: deletedMessageSocket) => {
-				console.log(obj);
 				if (obj.lastMsg)
 					dialgosStore.updateLastMessage(
 						obj.lastMsg[0].dialog,
@@ -118,13 +117,12 @@ export const ChatBar = observer(() => {
 		socket
 			.off('SERVER:MESSAGES_READED')
 			.on('SERVER:MESSAGES_READED', msgData => {
-				console.log(msgData.dialogId);
-				console.log(authStore.user._id);
 				if (
 					dialogsStore.currentDialog?._id === msgData.dialogId &&
 					authStore.user._id !== msgData.userId
 				) {
-					messagesStore.updateUnreadStatus();
+					console.log(msgData);
+					messagesStore.updateUnreadStatus(msgData.dialogId);
 				}
 			});
 	}, []);

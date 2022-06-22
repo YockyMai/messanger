@@ -195,7 +195,6 @@ export const Message: React.FC<MessageProps> = observer(
 					msgText.current.innerText.length,
 				);
 
-				console.log(msgText.current.children.length);
 				range.collapse(true);
 				sel && sel.removeAllRanges();
 				sel && sel.addRange(range);

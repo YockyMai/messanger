@@ -24,7 +24,6 @@ class DialogsStore {
 			.then(res => {
 				this.setDialogs(res.data);
 				this.dialogsIsLoaded = false;
-				console.log(res.data);
 			})
 			.catch(err => {
 				console.log(err);
