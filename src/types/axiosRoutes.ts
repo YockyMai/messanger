@@ -3,4 +3,4 @@ export enum AxiosRoutes {
 	dev = 'https://hiyocky.herokuapp.com/',
 }
 
-// http://localhost:8080/
+//http://localhost:8080/

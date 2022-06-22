@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { Avatar } from '../Avatar';
 import friendsImg from '../../assets/img/friends.svg';
@@ -12,6 +12,9 @@ import authStore from '../../stores/authStore';
 import { User } from '../../types';
 import user from '../../utils/api/user';
 import { Loader } from '../UI/Loader';
+import cameraIcon from '../../assets/img/camera.svg';
+import axios from '../../core/axios';
+import userStore from '../../stores/userStore';
 
 const SideMenuStyle = styled.div<{ sideIsOpen: boolean }>`
 	height: 100vh;
@@ -41,7 +44,7 @@ const SideMenuContent = styled.div`
 	flex-direction: column;
 `;
 
-const UserBlock = styled.div`
+const UserBlock = styled.div<{ avatarIsHover: boolean }>`
 	display: flex;
 	align-items: center;
 	position: relative;
@@ -63,6 +66,35 @@ const UserBlock = styled.div`
 		width: 80%;
 		height: 1px;
 		background-color: #101018;
+	}
+	.avatar__choose {
+		border-radius: 50%;
+		overflow: hidden;
+		position: relative;
+		background-color: #3a3a3aed;
+		.avatar__choose-cameraIcon {
+			opacity: ${state => (state.avatarIsHover ? '1' : '0')};
+			transition: 0.15s;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			width: 100%;
+			height: 100%;
+			padding: 11px;
+			background-color: #101018b9;
+			transform: translate(-50%, -50%);
+			z-index: 1;
+		}
+
+		input {
+			width: 50px;
+			height: 80px;
+			opacity: 1;
+			position: absolute;
+			margin-top: -20px;
+			cursor: pointer;
+			z-index: 1;
+		}
 	}
 `;
 
@@ -127,7 +159,21 @@ export const SideMenu: React.FC<SideMenuProps> = ({
 	const [searchLimit, setSearchLimit] = React.useState(5);
 	const [filterIsOpen, setFilterIsOpen] = React.useState(false);
 	const [isLoading, setIsLoading] = React.useState(false);
-	const [isWomen, setIsWomen] = React.useState('');
+
+	const [avatarFile, setAvatarFile] = React.useState();
+	const changeAvatarFile = (e: ChangeEvent) => {
+		if (e.target) {
+			const file = (e.target as any).files[0];
+			const formData = new FormData();
+			formData.append('image', file);
+			axios.post('/files/avatar', formData).then(res => {
+				const { path } = res.data;
+				userStore.setAvatar(path);
+			});
+		}
+	};
+
+	const [toggleAvatarHover, setToggleAvatarHover] = React.useState(false);
 
 	React.useEffect(() => {
 		document.body.addEventListener('click', handleOutsideClick);
@@ -171,14 +217,36 @@ export const SideMenu: React.FC<SideMenuProps> = ({
 	return (
 		<SideMenuStyle sideIsOpen={sideIsOpen} ref={sideMenu}>
 			<SideMenuContent>
-				<UserBlock>
+				<UserBlock avatarIsHover={toggleAvatarHover}>
 					<div>
-						<Avatar
-							width="50px"
-							height="50px"
-							fullname={authStore.user.fullname}
-							user_id={authStore.user._id}
-						/>
+						<div
+							className="avatar__choose"
+							onMouseEnter={() => setToggleAvatarHover(true)}
+							onMouseLeave={() => setToggleAvatarHover(false)}>
+							<img
+								className="avatar__choose-cameraIcon"
+								src={cameraIcon}
+								alt="Chose avatar"
+							/>
+							<input
+								accept="image/png, image/jpeg"
+								type="file"
+								title="Choose your avatar"
+								onChange={changeAvatarFile}
+							/>
+							<span />
+							<Avatar
+								width="50px"
+								height="50px"
+								fullname={authStore.user.fullname}
+								user_id={authStore.user._id}
+								src={
+									authStore.user.avatar &&
+									authStore.user.avatar
+								}
+							/>
+						</div>
+
 						<p>{authStore.user.fullname}</p>
 					</div>
 
